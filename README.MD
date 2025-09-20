@@ -1289,22 +1289,22 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ### Use Cases
 [⬆️ Back to top](#)
 
-### Photographs
-#### **Primary:** AVIF
-#### **Fallback:** WebP
-#### **Last resort:** JPEG
+- Photographs
+  - **Primary:** AVIF
+  - **Fallback:** WebP
+  - **Last resort:** JPEG
 
-### Logos / Icons / Flat illustrations
-#### **Preferred:** SVG (don’t rasterize)
-#### **Alternative:** PNG/WebP only if raster is required at fixed size
+- Logos / Icons / Flat illustrations
+  - **Preferred:** SVG (don’t rasterize)
+  - **Alternative:** PNG/WebP only if raster is required at fixed size
 
-###  UI Screenshots / Crisp edges
-#### **Primary:** PNG (lossless, no chroma blur)
-#### **Alternative:** AVIF lossless if encoder tested (watch subsampling)
+- UI Screenshots / Crisp edges
+  - **Primary:** PNG (lossless, no chroma blur)
+  - **Alternative:** AVIF lossless if encoder tested (watch subsampling)
 
-#### Animations
-##### **Short loops:** Animated AVIF/WebP
-##### **Long/complex:** Video (`.mp4`/`.webm`)
+- Animations
+  - **Short loops:** Animated AVIF/WebP
+  - **Long/complex:** Video (`.mp4`/`.webm`)
 
 ### Implementation Examples
 [⬆️ Back to top](#)
