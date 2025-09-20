@@ -123,7 +123,7 @@ project/
 
 -----
 
-#### 1.2 Semantic HTML Requirements
+### 1.2 Semantic HTML Requirements
 
 - Use HTML5 semantic elements: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
 - Implement proper heading hierarchy (h1 → h6)
