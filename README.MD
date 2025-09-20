@@ -18,7 +18,7 @@
     - [robots.txt](#robotstxt)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
-    - [Server Configuration (nginx)](#server-configuration-nginx)
+      - [Server Configuration (nginx)](#server-configuration-nginx)
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#1-itcss--bem-methodology-with-css-layers)
