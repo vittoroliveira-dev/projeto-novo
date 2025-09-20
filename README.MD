@@ -17,11 +17,12 @@
 - [SEO and Indexing](#seo-and-indexing)
   - [Required Files](#required-files)
     - [robots.txt](#robotstxt)
+      - [Page-level robots for utility pages](#)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
-  - [hreflang block](#)
-  - [Page-level robots for utility pages](#)
-  - [Web App Manifest](#)
+  - [Web App Manifest + link](#website-json-ld-sitelinks-search-box) 
+  - [WWebSite JSON-LD (sitelinks search box)](#website-json-ld-sitelinks-search-box)
+  - [hreflang block](#hreflang-block-only-if-you-have-locales)
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#itcss--bem-methodology-with-css-layers)
@@ -412,6 +413,13 @@ Sitemap: https://example.com/sitemap.xml
 # Staging (usar outro arquivo): 
 # User-agent: * 
 # Disallow: /
+```
+
+#### Page-level robots for utility pages
+
+```html
+<!-- add on search results, thank-you, previews -->
+<meta name="robots" content="noindex, nofollow">
 ```
 
 ### sitemap.xml
