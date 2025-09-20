@@ -824,10 +824,10 @@ if (spot) onIntersect(spot, async () => {
 });
 ```
 
-```javascript
 #### Vite dynamic imports (glob)
 - Map page-specific initializers to chunks.
 
+```javascript
 // main.js
 const inits = import.meta.glob('./pages/**/init-*.js'); // lazy chunks
 document.querySelectorAll('[data-init]').forEach(async el => {
