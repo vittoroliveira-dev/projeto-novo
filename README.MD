@@ -33,10 +33,20 @@
   - [Dark Mode Implementation](#dark-mode-implementation)
 
 - [JavaScript Guidelines](#javascript-guidelines)
-  - [Modern ES6+ Standards](#1-modern-es6-standards)
-    - [Module Structure](#11-module-structure)
-    - [Component Class Pattern](#12-component-class-pattern)
-    - [Performance Optimization (JS)](#2-performance-optimization)
+  - [Modern ES6+ Standards](#modern-es6-standards)
+    - [Module Structure](#module-structure)
+    - [Component Class Pattern](#component-class-pattern)
+    - [Performance Optimization (JS)](#performance-optimization-js)
+      - [Ship less JS](#ship-less-js)
+      - [Code-split and lazy import](#code-split-and-lazy-import)
+      - [Keep handlers responsive (INP)](#preload-what-you-will-need-next)
+      - [](#)
+      - [Avoid layout thrash](#)
+      - [Ship less JS](#break-up-long-tasks)
+      - [Ship less JS](#network-and-fetch-priority)
+      - [Ship less JS](#build-time-optimizations-vite)
+      - [Ship less JS](#event-utilities-debouncethrottle)
+      - [Guard CSS/JS interaction](#guard-cssjs-interaction)
     - [Lazy Loading Implementation](#21-lazy-loading-implementation)
     - [Debounce & Throttle Utilities](#22-debounce--throttle-utilities)
     - [Web Vitals Monitoring](#3-web-vitals-monitoring)
@@ -857,10 +867,11 @@ export async function yieldToInput() {
 }
 ```
 
-```javascript
+
 #### Avoid layout thrash
 - Read, then write. Batch via `requestAnimationFrame`.
 
+```javascript
 // measure → mutate
 function setHeights(nodes){
   const heights = Array.from(nodes, n => n.offsetHeight); // read batch
