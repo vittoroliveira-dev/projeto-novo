@@ -494,9 +494,9 @@ Sitemap: https://example.com/sitemap.xml
 </script>
 ```
 
-```html
 ## hreflang block (only if you have locales)
 
+```html
 <link rel="alternate" hreflang="pt-BR" href="https://example.com/">
 <link rel="alternate" hreflang="en"    href="https://example.com/en/">
 <link rel="alternate" hreflang="x-default" href="https://example.com/">
