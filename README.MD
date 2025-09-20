@@ -6,6 +6,7 @@
 
 - [HTML Standards](#html-standards)
   - [Document Structure Requirements](#document-structure-requirements)
+    - [WebSite JSON-LD (sitelinks search box)](#)
     - [Base Template Specification](#base-template-specification)
     - [Semantic HTML Requirements](#semantic-html-requirements)
   - [Accessibility (WCAG 2.1 AA Compliance)](#accessibility-wcag-21-aa-compliance)
@@ -18,6 +19,8 @@
     - [robots.txt](#robotstxt)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
+  - hreflang block
+  - Page-level robots for utility pages
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#itcss--bem-methodology-with-css-layers)
@@ -55,6 +58,7 @@
     - [Progressive Enhancement](#4-progressive-enhancement)
 
 - [Performance Optimization](#performance-optimization)
+  - [HTTP caching policy](#)
   - [Image Optimization Strategy](#1-image-optimization-strategy)
     - [Responsive Images Implementation](#1-image-optimization-strategy)
     - [Modern Image Formats](#12-modern-image-formats-guide)
@@ -75,6 +79,9 @@
   - [Service Worker Implementation](#service-worker-implementation)
 
 - [Security Implementation](#security-implementation)
+  - [Security Headers](#)
+    - [Security headers beyond CSP](#)
+    - [Subresource Integrity](#)
   - [Performance Monitoring](#performance-monitoring)
   - [Google TAG Manager - (GA4, CSP-safe, consent mode, SPA-ready)](#dompurify-usage-self-host-esm--csp-friendly)
   - [Content Security Policy](#content-security-policy)
@@ -94,6 +101,7 @@
     - [Jest Unit Testing](#jest-unit-testing)
       - [Example Test](#example-test)
       - [Example E2E Test](#example-e2e-test)
+        - [Accessibility in CI (axe with Playwright)](#)
   - [Performance Budget](#performance-budget)
 
 - [Additional Resources](#additional-resources)
