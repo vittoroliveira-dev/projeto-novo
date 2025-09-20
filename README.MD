@@ -16,11 +16,10 @@
   - [Structured Data Implementation](#3-structured-data-implementation)
 
 - [SEO and Indexing](#seo-and-indexing)
-  - [Meta Tags Configuration](#meta-tags-configuration)
   - [Required Files](#required-files)
-    - [robots.txt](#robotstxt)
-    - [sitemap.xml](#sitemapxml)
-    - [404.html](#404html)
+  - [robots.txt](#robotstxt)
+  - [sitemap.xml](#sitemapxml)
+  - [404.html](#404html)
   - [Server Configuration (nginx)](#server-configuration-nginx)
 
 - [CSS Architecture](#css-architecture)
