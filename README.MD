@@ -89,42 +89,38 @@ project/
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
     
-    <!-- Critical CSS (inline) -->
-    <style>/* Critical path CSS */</style>
-    
-    <!-- Non-critical CSS -->
-    <link rel="preload" href="/styles/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/styles/main.css"></noscript>
-</head>
-<body>
+    <!-- CSS without onload hack and without inline -->
+    <link rel="preload" href="/css/critical.css" as="style">
+    <link rel="stylesheet" href="/css/critical.css">
+    <link rel="stylesheet" href="/styles/main.css">
+
+    </head>
+    <body>
     <!-- Skip Navigation -->
     <a href="#main" class="skip-link">Skip to main content</a>
-    
+
     <!-- Semantic Structure -->
-    <header role="banner">
-        <nav role="navigation" aria-label="Main navigation">
-            <!-- Navigation items -->
-        </nav>
+    <header>
+    <nav aria-label="Main navigation"><!-- items --></nav>
     </header>
-    
-    <main id="main" role="main">
-        <h1>Single H1 per page</h1>
-        <!-- Page content -->
+
+    <main id="main" tabindex="-1">
+    <h1>Single H1 per page</h1>
+    <!-- Page content -->
     </main>
-    
-    <aside role="complementary" aria-label="Sidebar">
-        <!-- Secondary content -->
+
+    <aside aria-label="Sidebar">
+    <!-- Secondary content -->
     </aside>
-    
-    <footer role="contentinfo">
-        <!-- Footer content -->
+
+    <footer>
+    <!-- Footer content -->
     </footer>
-    
-    <!-- JavaScript -->
-    <script src="/scripts/main.js" defer></script>
-</body>
-</html>
-```
+
+    <script src="/scripts/main.js" type="module" defer></script>
+    </body>
+    </html>
+    ```
 
 #### 1.2 Semantic HTML Requirements
 
@@ -542,63 +538,33 @@ export function throttle(func, limit) {
 
 ### 3. Web Vitals Monitoring
 
-```javascript
-// modules/PerformanceMonitor.js
+<-- PerformanceMonitor — Align to CSP and Static Scenario -->
+```// modules/PerformanceMonitor.js
 export class PerformanceMonitor {
-    constructor() {
-        this.initWebVitals();
-        this.trackErrors();
-    }
-    
-    async initWebVitals() {
-        if ('web-vitals' in window) return;
-        
-        const {onLCP, onINP, onCLS, onFCP, onTTFB} = await import(
-            'https://unpkg.com/web-vitals@3/dist/web-vitals.js'
-        );
-        
-        const sendMetric = (metric) => {
-            // Send to analytics endpoint
-            if (navigator.sendBeacon) {
-                const data = JSON.stringify({
-                    name: metric.name,
-                    value: metric.value,
-                    delta: metric.delta,
-                    id: metric.id,
-                    url: window.location.href
-                });
-                navigator.sendBeacon('/api/metrics', data);
-            }
-        };
-        
-        onLCP(sendMetric);
-        onINP(sendMetric);
-        onCLS(sendMetric);
-        onFCP(sendMetric);
-        onTTFB(sendMetric);
-    }
-    
-    trackErrors() {
-        window.addEventListener('error', (event) => {
-            const errorData = {
-                message: event.message,
-                source: event.filename,
-                line: event.lineno,
-                column: event.colno,
-                stack: event.error?.stack,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Send to error tracking service
-            this.reportError(errorData);
-        });
-    }
-    
-    reportError(errorData) {
-        if (navigator.sendBeacon) {
-            navigator.sendBeacon('/api/errors', JSON.stringify(errorData));
-        }
-    }
+  constructor() {
+    this.initWebVitals();
+    this.trackErrors();
+  }
+
+  async initWebVitals() {
+    const { onLCP, onINP, onCLS, onFCP, onTTFB } = await import(
+      'https://cdn.jsdelivr.net/npm/web-vitals@3/dist/web-vitals.iife.js'
+    );
+    const send = (m) => {
+      // Em site estático puro: integre com provider (ex.: Plausible, GA4) ou remova
+      // navigator.sendBeacon('/api/metrics', JSON.stringify(m));
+      console.log('[web-vitals]', m);
+    };
+    onLCP(send); onINP(send); onCLS(send); onFCP(send); onTTFB(send);
+  }
+
+  trackErrors() {
+    window.addEventListener('error', (e) => {
+      const payload = { msg: e.message, src: e.filename, line: e.lineno, col: e.colno };
+      // navigator.sendBeacon('/api/errors', JSON.stringify(payload));
+      console.warn('[error]', payload);
+    });
+  }
 }
 ```
 
@@ -757,6 +723,10 @@ class FormEnhancer {
 
 ### 3. Service Worker Implementation
 
+<-- Service Worker — choose ONE approach-->
+<-- Use manual sw.js: keep your “Service Worker Implementation” section and remove VitePWA from vite.config.js.-->
+<-- Or use VitePWA: remove the sw.js block from this guide. -->
+
 ```javascript
 // sw.js
 const CACHE_VERSION = 'v1.0.0';
@@ -855,40 +825,84 @@ self.addEventListener('fetch', (event) => {
 });
 ```
 
+<--Below is vite.config.js without VitePWA.-->
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
+import viteCompression from 'vite-plugin-compression';
+import viteImagemin from 'vite-plugin-imagemin';
+
+export default defineConfig({
+  root: 'src',
+  build: {
+    outDir: '../dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: { main: 'src/index.html', about: 'src/about.html' },
+      output: {
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js'
+      }
+    },
+    minify: 'terser',
+    terserOptions: { compress: { drop_console: true, drop_debugger: true } },
+    cssMinify: true,
+    assetsInlineLimit: 4096,
+    reportCompressedSize: true
+  },
+  plugins: [
+    createHtmlPlugin({ minify: true }),
+    viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
+    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
+    viteImagemin({
+      gifsicle:{optimizationLevel:3}, optipng:{optimizationLevel:5},
+      mozjpeg:{quality:75}, pngquant:{quality:[0.65,0.9],speed:4},
+      svgo:{ plugins:[{name:'removeViewBox',active:false},{name:'removeEmptyAttrs',active:true}] },
+      webp:{quality:75}, avif:{quality:50}
+    })
+  ],
+  css: { postcss: './postcss.config.js' },
+  server: { port: 3000, https: true, open: true },
+  preview: { port: 8080, https: true }
+});
+```
+
 ### 4. Speculation Rules API
 
+<-- Speculation Rules — Use nonce or external file -->
 ```html
-<!-- Prerender high-probability navigation targets -->
-<script type="speculationrules">
+<head>
+<link rel="speculationrules" href="/speculation-rules.json">
+<script type="speculationrules" nonce="{NONCE}">
 {
-    "prerender": [
-        {
-            "source": "list",
-            "urls": ["/about", "/products", "/contact"]
-        },
-        {
-            "source": "document",
-            "where": {
-                "and": [
-                    {"href_matches": "/*"},
-                    {"not": {"href_matches": "/admin/*"}},
-                    {"not": {"selector_matches": "[data-no-prerender]"}}
-                ]
-            },
-            "eagerness": "moderate"
-        }
-    ],
-    "prefetch": [
-        {
-            "source": "document",
-            "where": {
-                "selector_matches": "a[href]"
-            },
-            "eagerness": "conservative"
-        }
-    ]
+  "prerender": [{"source":"list","urls":["/about","/products","/contact"]}],
+  "prefetch": [{"source":"document","where":{"selector_matches":"a[href]"},"eagerness":"conservative"}]
 }
 </script>
+```
+<-- Create public/speculation-rules.json (or serve in /speculation-rules.json) -->
+```json
+{
+  "prerender": [
+    { "source": "list", "urls": ["/about", "/products", "/contact"] },
+    {
+      "source": "document",
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/admin/*" } },
+          { "not": { "selector_matches": "[data-no-prerender]" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ],
+  "prefetch": [
+    { "source": "document", "where": { "selector_matches": "a[href]" }, "eagerness": "conservative" }
+  ]
+}
 ```
 
 -----
@@ -897,23 +911,20 @@ self.addEventListener('fetch', (event) => {
 
 ### 1. Content Security Policy
 
+<-- Security — Updated CSP and Headers
+CSP (nonce + strict-dynamic; no frame-src; no unsafe-inline) -->
 ```javascript
-// CSP Header Configuration (server-side or meta tag)
+// Header generation (example)
 const cspPolicy = {
-    'default-src': ["'self'"],
-    'script-src': ["'self'", "'nonce-{NONCE}'", "https://cdn.jsdelivr.net"],
-    'style-src': ["'self'", "'unsafe-inline'"], // Consider nonces for inline styles
-    'img-src': ["'self'", "data:", "https:"],
-    'font-src': ["'self'", "https://fonts.gstatic.com"],
-    'connect-src': ["'self'", "https://api.example.com"],
-    'media-src': ["'self'"],
-    'object-src': ["'none'"],
-    'frame-src': ["'none'"],
-    'frame-ancestors': ["'none'"],
-    'base-uri': ["'self'"],
-    'form-action': ["'self'"],
-    'upgrade-insecure-requests': [],
-    'block-all-mixed-content': []
+  "default-src": ["'self'"],
+  "script-src": ["'self'", "'nonce-{NONCE}'", "'strict-dynamic'", "https://cdn.jsdelivr.net"],
+  "style-src": ["'self'", "'nonce-{NONCE}'"],
+  "img-src": ["'self'", "data:", "https:"],
+  "font-src": ["'self'", "https://fonts.gstatic.com"],
+  "connect-src": ["'self'", "https://api.example.com"],
+  "object-src": ["'none'"],
+  "base-uri": ["'self'"],
+  "frame-ancestors": ["'none'"]
 };
 
 // Generate CSP header string
@@ -924,14 +935,25 @@ const cspString = Object.entries(cspPolicy)
 
 ### 2. Security Headers
 
-```
-# .htaccess or server configuration
+<-- Headers (Apache/nginx) -->
+```nginx
+# Remove: X-XSS-Protection (deprecated)
 Header always set X-Content-Type-Options "nosniff"
-Header always set X-Frame-Options "DENY"
-Header always set X-XSS-Protection "1; mode=block"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
-Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+Header always set X-Frame-Options "SAMEORIGIN"   # opcional como fallback a frame-ancestors
+# Permissions-Policy sintaxe moderna
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+```
+
+<-- nginx (equivalent)-->
+```pgsql
+add_header X-Content-Type-Options "nosniff";
+add_header Referrer-Policy "strict-origin-when-cross-origin";
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()";
+# X-Frame-Options opcional como fallback:
+add_header X-Frame-Options "SAMEORIGIN";
 ```
 
 ### 3. Subresource Integrity
@@ -1270,104 +1292,17 @@ export default {
 };
 ```
 
-### 4. GitHub Actions CI/CD
-
-```yaml
-# .github/workflows/deploy.yml
-name: Build and Deploy
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Run linters
-        run: npm run lint
-      
-      - name: Run tests
-        run: npm test
-      
-      - name: Run accessibility tests
-        run: npm run test:a11y
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build site
-        run: npm run build
-      
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
-        with:
-          urls: |
-            http://localhost:8080
-            http://localhost:8080/about
-          budgetPath: ./budget.json
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-      
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist/
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: dist/
-      
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: static-site
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Purge CDN Cache
-        run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.ZONE_ID }}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{"purge_everything":true}'
+<-- Reinforce the Purge safelist -->
+```javascript
+// postcss.config.js (trecho PurgeCSS)
+purgecss({
+  content: ['./src/**/*.html', './src/**/*.js'],
+  safelist: {
+    standard: [/^is-/, /^has-/, /^u-/, /^c-/, /^l-/, /^js-/],
+    deep: [/^modal/, /^tooltip/, /^toast/],
+    greedy: [/^swiper/]
+  }
+})
 ```
 
 -----
