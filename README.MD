@@ -9,7 +9,7 @@
     - [Base Template Specification](#base-template-specification)
     - [Semantic HTML Requirements](#semantic-html-requirements)
   - [Accessibility (WCAG 2.1 AA Compliance)](#accessibility-wcag-21-aa-compliance)
-    - [ARIA Implementation](#21-aria-implementation)
+    - [ARIA Implementation](#aria-implementation)
     - [Keyboard Navigation](#keyboard-navigation)
   - [Structured Data Implementation](#structured-data-implementation)
 
@@ -18,20 +18,19 @@
     - [robots.txt](#robotstxt)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
-      - [Server Configuration (nginx)](#server-configuration-nginx)
 
 - [CSS Architecture](#css-architecture)
-  - [ITCSS + BEM Methodology](#1-itcss--bem-methodology-with-css-layers)
-    - [Layer Structure](#1-itcss--bem-methodology-with-css-layers)
-    - [Design Tokens](#12-design-tokens)
-    - [BEM Naming Convention](#13-bem-naming-convention)
-  - [Responsive Design System](#2-responsive-design-system)
-    - [Mobile-First Grid](#21-mobile-first-grid)
-    - [Container Queries](#22-container-queries-modern-approach)
-  - [Performance CSS](#3-performance-css)
-    - [Critical CSS Strategy](#31-critical-css-strategy)
-    - [Font Loading Optimization](#32-font-loading-optimization)
-  - [Dark Mode Implementation](#4-dark-mode-implementation)
+  - [ITCSS + BEM Methodology](#itcss--bem-methodology-with-css-layers)
+    - [Layer Structure](#layer-structure)
+    - [Design Tokens](#design-tokens)
+    - [BEM Naming Convention](#bem-naming-convention)
+  - [Responsive Design System](#responsive-design-system)
+    - [Mobile-First Grid](#mobile-first-grid)
+    - [Container Queries](#container-queries)
+  - [Performance CSS](#performance-css)
+    - [Critical CSS Strategy](#critical-css-strategy)
+    - [Font Loading Optimization](#font-loading-optimization)
+  - [Dark Mode Implementation](#dark-mode-implementation)
 
 - [JavaScript Guidelines](#javascript-guidelines)
   - [Modern ES6+ Standards](#1-modern-es6-standards)
@@ -381,6 +380,7 @@
 [⬆️ Back to top](#)
 
 ### robots.txt
+
 ```txt
 User-agent: *
 Disallow:
@@ -391,6 +391,8 @@ Sitemap: https://example.com/sitemap.xml
 ```
 
 ### sitemap.xml
+[⬆️ Back to top](#)
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -403,6 +405,8 @@ Sitemap: https://example.com/sitemap.xml
 ```
 
 ### 404.html
+[⬆️ Back to top](#)
+
 ```html
 <!doctype html>
 <html lang="pt-BR">
