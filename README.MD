@@ -107,6 +107,7 @@
 ---
 
 # Project Structure
+[⬆️ Back to top](#)
 
 ```diff
  project/
@@ -161,10 +162,13 @@
 ---
 
 # HTML Standards
+[⬆️ Back to top](#)
 
 ## Document Structure Requirements
+[⬆️ Back to top](#)
 
 ### Base Template Specification
+[⬆️ Back to top](#)
 
 ```html
 <!DOCTYPE html>
