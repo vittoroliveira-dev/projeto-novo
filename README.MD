@@ -91,7 +91,10 @@
     - [Trusted Types (Chromium hardening; harmless elsewhere)](#add--trusted-types-chromium-hardening-harmless-elsewhere)
     - [Input sanitization section (expand with URL and HTML guards)](#input-sanitization-section-expand-with-url-and-html-guards)
     - [DOMPurify usage (self-host ESM + CSP-friendly)](#dompurify-usage-self-host-esm--csp-friendly)
-  - [Security Headers](#)
+  - [Security Headers](#security-headers)
+    - [Security headers beyond CSP](#security-headers-beyond-csp)
+    - [Subresource Integrity](#subresource-integrity)
+      - [Subresource Integrity for any third-party JS you pin (not GA)](#subresource-integrity-for-any-third-party-js-you-pin-not-ga)
 
   - [Analytics Implementation]()
     - [Google Analytics 4](#google-analytics-4-csp-compatible)
@@ -1286,22 +1289,22 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ### Use Cases
 [⬆️ Back to top](#)
 
-#### Photographs
-##### **Primary:** AVIF
-##### **Fallback:** WebP
-##### **Last resort:** JPEG
+### Photographs
+#### **Primary:** AVIF
+#### **Fallback:** WebP
+#### **Last resort:** JPEG
 
-#### Logos / Icons / Flat illustrations
-##### **Preferred:** SVG (don’t rasterize)
-##### **Alternative:** PNG/WebP only if raster is required at fixed size
+### Logos / Icons / Flat illustrations
+#### **Preferred:** SVG (don’t rasterize)
+#### **Alternative:** PNG/WebP only if raster is required at fixed size
 
-####  UI Screenshots / Crisp edges
-##### **Primary:** PNG (lossless, no chroma blur)
-##### **Alternative:** AVIF lossless if encoder tested (watch subsampling)
+###  UI Screenshots / Crisp edges
+#### **Primary:** PNG (lossless, no chroma blur)
+#### **Alternative:** AVIF lossless if encoder tested (watch subsampling)
 
-##### Animations
-###### **Short loops:** Animated AVIF/WebP
-###### **Long/complex:** Video (`.mp4`/`.webm`)
+#### Animations
+##### **Short loops:** Animated AVIF/WebP
+##### **Long/complex:** Video (`.mp4`/`.webm`)
 
 ### Implementation Examples
 [⬆️ Back to top](#)
