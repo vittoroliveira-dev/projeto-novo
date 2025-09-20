@@ -2,10 +2,6 @@
 
 ## 📋 Table of Contents
 
-# 🚀 Static Site Development Guidelines
-
-## 📋 Table of Contents
-
 - [Project Structure](#project-structure)
   - [Folder Organization](#folder-organization)
   - [File Naming Conventions](#file-naming-conventions)
@@ -25,7 +21,7 @@
     - [robots.txt](#robotstxt)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
-  - [Server Configuration](#server-configuration)
+  - [Server Configuration (nginx)](#server-configuration-nginx)
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#itcss--bem-methodology)
@@ -44,7 +40,7 @@
   - [Modern ES6+ Standards](#modern-es6-standards)
     - [Module Structure](#module-structure)
     - [Component Class Pattern](#component-class-pattern)
-  - [Performance Optimization](#performance-optimization-js)
+  - [Performance Optimization (JS)](#performance-optimization-js)
     - [Lazy Loading Implementation](#lazy-loading-implementation)
     - [Debounce & Throttle Utilities](#debounce--throttle-utilities)
   - [Web Vitals Monitoring](#web-vitals-monitoring)
@@ -74,15 +70,17 @@
   - [Subresource Integrity](#subresource-integrity)
   - [Input Sanitization](#input-sanitization)
 
+- [Performance Monitoring](#performance-monitoring)
+  - [Real User Monitoring](#real-user-monitoring)
+  - [Analytics Implementation](#analytics-implementation)
+    - [Google Analytics 4](#google-analytics-4)
+    - [Privacy-Focused Alternatives](#privacy-focused-alternatives)
+
 - [Quality Assurance](#quality-assurance)
   - [Testing Configuration](#testing-configuration)
     - [Jest Unit Testing](#jest-unit-testing)
     - [Playwright E2E Testing](#playwright-e2e-testing)
   - [Performance Budget](#performance-budget)
-  - [Real User Monitoring](#real-user-monitoring)
-  - [Analytics Implementation](#analytics-implementation)
-    - [Google Analytics 4](#google-analytics-4)
-    - [Privacy-Focused Alternatives](#privacy-focused-alternatives)
 
 - [Additional Resources](#additional-resources)
   - [Validation Tools](#validation-tools)
