@@ -6,7 +6,7 @@
 
 - [HTML Standards](#html-standards)
   - [Document Structure Requirements](#document-structure-requirements)
-    - [Base Template Specification](#11-base-template-specification)
+    - [Base Template Specification](#base-template-specification)
     - [Semantic HTML Requirements](#semantic-html-requirements)
   - [Accessibility (WCAG 2.1 AA Compliance)](#accessibility-wcag-21-aa-compliance)
     - [ARIA Implementation](#21-aria-implementation)
