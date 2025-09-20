@@ -1224,10 +1224,141 @@ Create `/speculation-rules.json`:
   ]
 }
 ```
+## 5 Speculation Rules API
 
-### 5. Build Configuration
+    ### 5.1 From the Speculation Rules API Guide, here is a compact, English, copy-pasteable set of pieces you can directly reuse to build a fast HTML + CSS + JavaScript site. First, mark up navigation and links so the rules have something to target and keep a simple opt-out for sensitive routes: 
 
-#### 5.1 Vite Configuration
+```html
+<nav class="main-nav">
+  <a class="nav-link primary-link" href="/about">About</a>
+  <a class="nav-link secondary-link" href="/contact">Contact</a>
+  <a class="related-post-link" href="/blog/next-post">Next</a>
+</nav>
+<a href="/admin" data-no-prerender>Admin</a>
+<link rel="prefetch" href="/category/popular">
+```
+
+  ### Next, prefer a static JSON file of rules so it’s easy to version and audit, then reference it once in the page head: 
+
+```javascript
+<script type="speculationrules" src="/speculation-rules.json"></script>
+```
+
+  ### And in /speculation-rules.json use a safe default that prerenders product pages on hover and prefetches categories and nav: 
+
+```json
+{
+  "prerender": [
+    { "where": { "href_matches": "/product/*" }, "eagerness": "moderate" }
+  ],
+  "prefetch": [
+    { "where": { "href_matches": "/category/*" }, "eagerness": "conservative" },
+    { "where": { "selector_matches": ".nav-link" }, "eagerness": "conservative" }
+  ]
+}
+```
+
+  ### Keep a tiny bootstrap that detects support and falls back to <link rel="prefetch"> so older browsers still benefit: 
+
+```javascript
+<script>
+  function supportsSpeculationRules() {
+    return 'supports' in HTMLScriptElement && HTMLScriptElement.supports('speculationrules');
+  }
+  function prefetch(url) {
+    const l = document.createElement('link'); l.rel='prefetch'; l.href=url; document.head.appendChild(l);
+  }
+  (function () {
+    if (!supportsSpeculationRules()) {
+      document.querySelectorAll('.nav-link, .primary-link').forEach(a => prefetch(a.href));
+    }
+  })();
+</script>
+```
+
+  ### Add behavior-driven rules to create real UX wins without overdoing it. Prerender a product on hover, prefetch the next page in listings, and after some reading time prerender a few related posts: 
+
+```javascript
+<script>
+  function addSpeculationRules(rules){
+    const s=document.createElement('script'); s.type='speculationrules'; s.textContent=JSON.stringify(rules);
+    document.head.appendChild(s);
+  }
+
+  document.addEventListener('mouseover', e => {
+    const a = e.target.closest('a[href^="/product/"]');
+    if (!a || a.matches('[data-no-prerender]')) return;
+    addSpeculationRules({ prerender: [{ urls:[a.href], eagerness:'moderate' }] });
+  }, { passive:true });
+
+  (function prefetchNext(){
+    const url = new URL(location); const p = Number(url.searchParams.get('page')||1)+1;
+    url.searchParams.set('page', p);
+    addSpeculationRules({ prefetch: [{ urls:[url.pathname+url.search], eagerness:'conservative' }] });
+  })();
+
+  if (document.body.classList.contains('single-post')) {
+    setTimeout(() => {
+      const urls = [...document.querySelectorAll('.related-post-link')].slice(0,3).map(a=>a.href);
+      if (urls.length) addSpeculationRules({ prerender:[{ urls, eagerness:'moderate' }] });
+    }, 30000);
+  }
+</script>
+```
+
+  ### Make the strategy adaptive so you avoid wasting CPU and bandwidth on low-end conditions or users in Data Saver. Only enable more aggressive prerendering if the device can handle it: 
+
+```javascript
+<script>
+  const conn = navigator.connection || {};
+  const saveData = navigator.saveData === true;
+  const lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
+                 /2g/.test(conn.effectiveType||'');
+
+  function canPrerender() { return !saveData && !lowEnd; }
+
+  if (canPrerender()) {
+    const s=document.createElement('script');
+    s.type='speculationrules';
+    s.textContent=JSON.stringify({ prerender:[{ urls:['/dashboard','/profile'], eagerness:'moderate' }] });
+    document.head.appendChild(s);
+  }
+</script>
+```
+
+  ### If you use a SPA or do client-side routing, clear old rules on route change before applying fresh ones so nothing “leaks” across pages: 
+
+```javascript
+<script>
+  function clearSpeculation() {
+    document.querySelectorAll('script[type="speculationrules"]').forEach(s=>s.remove());
+  }
+  window.addEventListener('popstate', () => { clearSpeculation(); /* reapply rules for the current route here */ });
+</script>
+
+Measure the impact so you know the rules are paying off. A minimal observer that logs navigation entries and a rough FCP is enough to start: 
+
+<script>
+  if ('PerformanceObserver' in window) {
+    new PerformanceObserver(list => {
+      for (const e of list.getEntries()) {
+        if (e.entryType === 'navigation') {
+          const fcp = performance.getEntriesByName('first-contentful-paint')[0]?.startTime ?? null;
+          console.log('[nav]', { url:e.name, fcp });
+        }
+      }
+    }).observe({ entryTypes:['navigation'] });
+  }
+</script>
+```
+
+  ### To wrap up, keep eagerness sensible (conservative for likely clicks, moderate for hovers, immediate only for truly critical paths), filter out routes that must never prerender (admin, hash links, debug queries), prefer selector-based targeting for precision, and always pair this with good HTML semantics and image optimization so the navigation speedups translate into a noticeably faster, more polished site.
+
+
+### 6. Build Configuration
+
+ #### 6.1 Vite Configuration
 
 ```javascript
 // vite.config.js
@@ -1290,7 +1421,7 @@ export default defineConfig({
 
 ## PostCSS Configuration
 
-### 5.2 PostCSS Configuration
+### 6.2 PostCSS Configuration
 
 ```javascript
 // postcss.config.js
@@ -1345,7 +1476,7 @@ export default {
 };
 ```
 
-### 5.3 Reinforced PurgeCSS Safelist
+### 6.3 Reinforced PurgeCSS Safelist
 
 ```javascript
 // postcss.config.js (PurgeCSS section)
@@ -1363,7 +1494,7 @@ purgecss({
 
 ## Build & Deployment
 
-### 6.1 Versioned Assets & Caching Strategy
+### 7.1 Versioned Assets & Caching Strategy
 
 ```nginx
 # CDN configuration with Brotli/HTTP3 enabled
