@@ -5,13 +5,13 @@
 - [Project Structure](#project-structure)
 
 - [HTML Standards](#html-standards)
-  - [Document Structure Requirements](#1-document-structure-requirements)
+  - [Document Structure Requirements](#document-structure-requirements)
     - [Base Template Specification](#11-base-template-specification)
-    - [Semantic HTML Requirements](#12-semantic-html-requirements)
-  - [Accessibility (WCAG 2.1 AA Compliance)](#2-accessibility-wcag-21-aa-compliance)
+    - [Semantic HTML Requirements](#semantic-html-requirements)
+  - [Accessibility (WCAG 2.1 AA Compliance)](#accessibility-wcag-21-aa-compliance)
     - [ARIA Implementation](#21-aria-implementation)
-    - [Keyboard Navigation](#22-keyboard-navigation)
-  - [Structured Data Implementation](#3-structured-data-implementation)
+    - [Keyboard Navigation](#keyboard-navigation)
+  - [Structured Data Implementation](#structured-data-implementation)
 
 - [SEO and Indexing](#seo-and-indexing)
   - [Required Files](#required-files)
