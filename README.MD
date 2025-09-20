@@ -121,6 +121,8 @@ project/
     </html>
     ```
 
+-----
+
 #### 1.2 Semantic HTML Requirements
 
 - Use HTML5 semantic elements: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
