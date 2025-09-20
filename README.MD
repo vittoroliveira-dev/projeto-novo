@@ -64,7 +64,8 @@
       - [Implementation Examples](#implementation-examples)
       - [Encoding Commands](#encoding-commands)
         - [AVIF Encoding](#avif-encoding)
-        - [AVIF Encoding](#avif-encoding)
+        - [WebP Encoding - Photos (lossy)](#webp-encoding---photos-lossy)
+        - [Batch Processing Example](#batch-processing-example)
       - [Server Configuration](#server-configuration)
       - [Best Practices](#best-practices)
   - [Resource Hints & Preloading](#2-resource-hints--preloading)
@@ -1404,7 +1405,7 @@ server {
 }
 ```
 
-##### Apache Configuration
+#### Apache Configuration
 
 ```apache
 AddType image/avif .avif
