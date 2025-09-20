@@ -1341,8 +1341,8 @@ avifenc -q 28 -s 6 -y 444 --jobs all input-srgb.png -o output.avif
 avifenc --lossless -s 4 --jobs all input-srgb.png -o output.avif
 ```
 
-##### WebP Encoding
-##### Photos (lossy)
+##### WebP Encoding - Photos (lossy)
+
 ```bash
 cwebp -q 77 -m 6 -sharp_yuv -mt input.jpg -o output.webp
  
