@@ -537,7 +537,7 @@ export function throttle(func, limit) {
 
 ### 3. Web Vitals Monitoring
 
-<-- PerformanceMonitor — Align to CSP and Static Scenario -->
+#### 3.1 PerformanceMonitor — Align to CSP and Static Scenario 
 ```// modules/PerformanceMonitor.js
 export class PerformanceMonitor {
   constructor() {
@@ -722,9 +722,9 @@ class FormEnhancer {
 
 ### 3. Service Worker Implementation
 
-<-- Service Worker — choose ONE approach-->
-<-- Use manual sw.js: keep your “Service Worker Implementation” section and remove VitePWA from vite.config.js.-->
-<-- Or use VitePWA: remove the sw.js block from this guide. -->
+#### 3.1 Service Worker — choose ONE approach
+#### 3.1.1 Use manual sw.js: keep your “Service Worker Implementation” section and remove VitePWA from vite.config.js.
+#### 3.1.1.1 Or use VitePWA: remove the sw.js block from this guide.
 
 ```javascript
 // sw.js
@@ -824,7 +824,7 @@ self.addEventListener('fetch', (event) => {
 });
 ```
 
-<--Below is vite.config.js without VitePWA.-->
+#### 3.2 Below is vite.config.js without VitePWA
 ```javascript
 // vite.config.js
 import { defineConfig } from 'vite';
@@ -870,7 +870,7 @@ export default defineConfig({
 
 ### 4. Speculation Rules API
 
-<-- Speculation Rules — Use nonce or external file -->
+#### 4.1 Speculation Rules — Use nonce or external file 
 ```html
 <head>
 <link rel="speculationrules" href="/speculation-rules.json">
@@ -881,7 +881,7 @@ export default defineConfig({
 }
 </script>
 ```
-<-- Create public/speculation-rules.json (or serve in /speculation-rules.json) -->
+#### 4.2 Create public/speculation-rules.json (or serve in /speculation-rules.json) 
 ```json
 {
   "prerender": [
@@ -910,7 +910,7 @@ export default defineConfig({
 
 ### 1. Content Security Policy
 
-<-- Security — Updated CSP and Headers
+#### 1.1 Security — Updated CSP and Headers
 CSP (nonce + strict-dynamic; no frame-src; no unsafe-inline) -->
 ```javascript
 // Header generation (example)
@@ -934,7 +934,7 @@ const cspString = Object.entries(cspPolicy)
 
 ### 2. Security Headers
 
-<-- Headers (Apache/nginx) -->
+#### 2.1 Headers (Apache/nginx) 
 ```nginx
 # Remove: X-XSS-Protection (deprecated)
 Header always set X-Content-Type-Options "nosniff"
@@ -945,7 +945,7 @@ Header always set X-Frame-Options "SAMEORIGIN"   # opcional como fallback a fram
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 ```
 
-<-- nginx (equivalent)-->
+#### 2.2 nginx (equivalent)
 ```pgsql
 add_header X-Content-Type-Options "nosniff";
 add_header Referrer-Policy "strict-origin-when-cross-origin";
@@ -1291,7 +1291,7 @@ export default {
 };
 ```
 
-<-- Reinforce the Purge safelist -->
+#### 3.1 Reinforce the Purge safelist
 ```javascript
 // postcss.config.js (trecho PurgeCSS)
 purgecss({
