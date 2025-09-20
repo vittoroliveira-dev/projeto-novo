@@ -76,11 +76,6 @@
           - [Testing and Validation](#testing-and-validation)
   - [Resource Hints & Preloading](#resource-hints--preloading)
   - [Service Worker Implementation](#service-worker-implementation)
-  - [Speculation Rules API](#speculation-rules-api)
-  - [Build Script Configuration](#build-script-configuration)
-    - [Build Configuration](#build-configuration)
-    - [Vite Configuration](#vite-configuration)
-    - [PostCSS Configuration](#postcss-configuration)
 
 - [Security Implementation]()
   - [Content Security Policy](#content-security-policy)
