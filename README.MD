@@ -5,7 +5,7 @@
 - [Project Structure](#project-structure)
 
 - [HTML Standards](#html-standards)
-  - [Document Structure Requirements](#document-structure-requirements)
+  - [Document Structure Requirements](#1-document-structure-requirements)
     - [Base Template Specification](#11-base-template-specification)
     - [Semantic HTML Requirements](#12-semantic-html-requirements)
   - [Accessibility (WCAG 2.1 AA Compliance)](#2-accessibility-wcag-21-aa-compliance)
