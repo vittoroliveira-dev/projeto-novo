@@ -8,7 +8,6 @@
 - [JavaScript Guidelines](#javascript-guidelines)
 - [Performance Optimization](#performance-optimization)
 - [Security Implementation](#security-implementation)
-- [Build & Deployment](#build--deployment)
 - [Quality Assurance](#quality-assurance)
 
 -----
