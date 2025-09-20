@@ -4,13 +4,16 @@
 
 - [Project Structure](#project-structure)
 - [HTML Standards](#html-standards)
+- [SEO and Indexing](#seo-and-indexing)
 - [CSS Architecture](#css-architecture)
 - [JavaScript Guidelines](#javascript-guidelines)
 - [Performance Optimization](#performance-optimization)
 - [Security Implementation](#security-implementation)
 - [Quality Assurance](#quality-assurance)
+- [Additional Resources](#additional-resources)
+- [Production Checklist](#production-checklist)
 
------
+---
 
 ## Project Structure
 
@@ -44,7 +47,7 @@ project/
 └── README.md
 ```
 
------
+---
 
 ## HTML Standards
 
@@ -52,74 +55,73 @@ project/
 
 #### 1.1 Base Template Specification
 
-    ```html
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-    <!-- Required Meta Tags -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO Meta Tags -->
-    <title>Page Title | Brand Name</title>
-    <meta name="description" content="155-character maximum description">
-    <link rel="canonical" href="https://domain.com/page/">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph Protocol -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Page Title">
-    <meta property="og:description" content="Engaging description">
-    <meta property="og:image" content="https://domain.com/og-image.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:url" content="https://domain.com/page/">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@handle">
-    
-    <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="alternate icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    
-    <!-- Font Preloading -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
-    
-    <!-- CSS without onload hack and without inline -->
-    <link rel="preload" href="/css/critical.css" as="style">
-    <link rel="stylesheet" href="/css/critical.css">
-    <link rel="stylesheet" href="/styles/main.css">
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Required Meta Tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>Page Title | Brand Name</title>
+  <meta name="description" content="155-character maximum description">
+  <link rel="canonical" href="https://domain.com/page/">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph Protocol -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Page Title">
+  <meta property="og:description" content="Engaging description">
+  <meta property="og:image" content="https://domain.com/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://domain.com/page/">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@handle">
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  <!-- Font Preloading -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- CSS -->
+  <link rel="preload" href="/css/critical.css" as="style">
+  <link rel="stylesheet" href="/css/critical.css">
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <!-- Skip Navigation -->
+  <a href="#main" class="skip-link">Skip to main content</a>
 
-    </head>
-    <body>
-    <!-- Skip Navigation -->
-    <a href="#main" class="skip-link">Skip to main content</a>
-
-    <!-- Semantic Structure -->
-    <header>
+  <!-- Semantic Structure -->
+  <header>
     <nav aria-label="Main navigation"><!-- items --></nav>
-    </header>
+  </header>
 
-    <main id="main" tabindex="-1">
+  <main id="main" tabindex="-1">
     <h1>Single H1 per page</h1>
     <!-- Page content -->
-    </main>
+  </main>
 
-    <aside aria-label="Sidebar">
+  <aside aria-label="Sidebar">
     <!-- Secondary content -->
-    </aside>
+  </aside>
 
-    <footer>
+  <footer>
     <!-- Footer content -->
-    </footer>
+  </footer>
 
-    <script src="/scripts/main.js" type="module" defer></script>
-    </body>
-    </html>
-    ```
+  <script src="/scripts/main.js" type="module" defer></script>
+</body>
+</html>
+```
 
 #### 1.2 Semantic HTML Requirements
 
@@ -136,35 +138,35 @@ project/
 ```html
 <!-- Navigation State -->
 <nav aria-label="Primary">
-    <a href="/" aria-current="page">Home</a>
-    <a href="/about">About</a>
+  <a href="/" aria-current="page">Home</a>
+  <a href="/about">About</a>
 </nav>
 
 <!-- Expandable Elements -->
 <button aria-expanded="false" aria-controls="menu-items">
-    Menu
+  Menu
 </button>
 <ul id="menu-items" hidden>
-    <!-- Menu items -->
+  <!-- Menu items -->
 </ul>
 
 <!-- Form Accessibility -->
 <form>
-    <label for="email">Email Address</label>
-    <input 
-        type="email" 
-        id="email" 
-        name="email"
-        autocomplete="email"
-        aria-required="true"
-        aria-invalid="false"
-        aria-describedby="email-error">
-    <span id="email-error" role="alert" aria-live="polite"></span>
+  <label for="email">Email Address</label>
+  <input 
+    type="email" 
+    id="email" 
+    name="email"
+    autocomplete="email"
+    aria-required="true"
+    aria-invalid="false"
+    aria-describedby="email-error">
+  <span id="email-error" role="alert" aria-live="polite"></span>
 </form>
 
 <!-- Decorative Icons -->
 <svg aria-hidden="true" focusable="false">
-    <!-- Icon content -->
+  <!-- Icon content -->
 </svg>
 ```
 
@@ -180,45 +182,86 @@ project/
 ```html
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Company Name",
-    "url": "https://domain.com",
-    "logo": "https://domain.com/logo.png",
-    "sameAs": [
-        "https://facebook.com/company",
-        "https://twitter.com/company"
-    ],
-    "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+55-11-99999-9999",
-        "contactType": "customer service",
-        "availableLanguage": "Portuguese"
-    }
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Company Name",
+  "url": "https://domain.com",
+  "logo": "https://domain.com/logo.png",
+  "sameAs": [
+    "https://facebook.com/company",
+    "https://twitter.com/company"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+55-11-99999-9999",
+    "contactType": "customer service",
+    "availableLanguage": "Portuguese"
+  }
 }
 </script>
 
 <!-- BreadcrumbList for hierarchical pages -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://domain.com"
-    },{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Category",
-        "item": "https://domain.com/category"
-    }]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://domain.com"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Category",
+    "item": "https://domain.com/category"
+  }]
 }
 </script>
 ```
 
------
+---
+
+## SEO and Indexing
+
+### Required Files
+
+#### robots.txt
+```txt
+User-agent: *
+Disallow:
+
+Sitemap: https://example.com/sitemap.xml
+```
+
+#### sitemap.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://example.com/</loc>
+    <lastmod>2025-09-01</lastmod>
+  </url>
+</urlset>
+```
+
+#### 404.html
+```html
+<main>
+  <h1>Page not found (404)</h1>
+  <p>Try the <a href="/">home page</a></p>
+</main>
+```
+
+#### Server Configuration (nginx)
+```nginx
+error_page 404 /404.html;
+location = /404.html { 
+  internal; 
+}
+```
+
+---
 
 ## CSS Architecture
 
@@ -241,39 +284,39 @@ project/
 
 ```css
 :root {
-    /* Colors */
-    --color-primary-100: hsl(220, 80%, 95%);
-    --color-primary-500: hsl(220, 80%, 50%);
-    --color-primary-900: hsl(220, 80%, 10%);
-    
-    /* Typography */
-    --font-family-base: system-ui, -apple-system, sans-serif;
-    --font-size-base: clamp(1rem, 2vw, 1.125rem);
-    --line-height-base: 1.6;
-    
-    /* Spacing */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 4rem;
-    
-    /* Z-index Scale */
-    --z-dropdown: 100;
-    --z-sticky: 200;
-    --z-overlay: 900;
-    --z-modal: 1000;
-    --z-tooltip: 1100;
-    
-    /* Transitions */
-    --transition-fast: 150ms ease-in-out;
-    --transition-base: 300ms ease-in-out;
-    
-    /* Breakpoints (for JS) */
-    --breakpoint-sm: 640px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 1024px;
-    --breakpoint-xl: 1280px;
+  /* Colors */
+  --color-primary-100: hsl(220, 80%, 95%);
+  --color-primary-500: hsl(220, 80%, 50%);
+  --color-primary-900: hsl(220, 80%, 10%);
+  
+  /* Typography */
+  --font-family-base: system-ui, -apple-system, sans-serif;
+  --font-size-base: clamp(1rem, 2vw, 1.125rem);
+  --line-height-base: 1.6;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+  
+  /* Z-index Scale */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 900;
+  --z-modal: 1000;
+  --z-tooltip: 1100;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 300ms ease-in-out;
+  
+  /* Breakpoints (for JS) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
 }
 ```
 
@@ -303,15 +346,15 @@ project/
 
 ```css
 .l-grid {
-    display: grid;
-    gap: var(--spacing-md);
-    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
 }
 
 @media (min-width: 768px) {
-    .l-grid--2-cols { grid-template-columns: repeat(2, 1fr); }
-    .l-grid--3-cols { grid-template-columns: repeat(3, 1fr); }
-    .l-grid--4-cols { grid-template-columns: repeat(4, 1fr); }
+  .l-grid--2-cols { grid-template-columns: repeat(2, 1fr); }
+  .l-grid--3-cols { grid-template-columns: repeat(3, 1fr); }
+  .l-grid--4-cols { grid-template-columns: repeat(4, 1fr); }
 }
 ```
 
@@ -319,13 +362,13 @@ project/
 
 ```css
 .c-card-container {
-    container-type: inline-size;
+  container-type: inline-size;
 }
 
 @container (min-width: 400px) {
-    .c-card {
-        grid-template-columns: 150px 1fr;
-    }
+  .c-card {
+    grid-template-columns: 150px 1fr;
+  }
 }
 ```
 
@@ -344,15 +387,15 @@ body { margin: 0; font-family: system-ui; }
 
 ```css
 @font-face {
-    font-family: 'CustomFont';
-    src: url('/fonts/custom.woff2') format('woff2');
-    font-display: swap;
-    font-weight: 400;
-    font-style: normal;
-    size-adjust: 105%;
-    ascent-override: 90%;
-    descent-override: 10%;
-    line-gap-override: 0%;
+  font-family: 'CustomFont';
+  src: url('/fonts/custom.woff2') format('woff2');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 105%;
+  ascent-override: 90%;
+  descent-override: 10%;
+  line-gap-override: 0%;
 }
 ```
 
@@ -361,30 +404,30 @@ body { margin: 0; font-family: system-ui; }
 ```css
 /* Automatic dark mode */
 :root {
-    color-scheme: light dark;
+  color-scheme: light dark;
 }
 
 /* Custom properties for themes */
 [data-theme="light"] {
-    --color-bg: hsl(0, 0%, 100%);
-    --color-text: hsl(0, 0%, 10%);
+  --color-bg: hsl(0, 0%, 100%);
+  --color-text: hsl(0, 0%, 10%);
 }
 
 [data-theme="dark"] {
-    --color-bg: hsl(0, 0%, 10%);
-    --color-text: hsl(0, 0%, 90%);
+  --color-bg: hsl(0, 0%, 10%);
+  --color-text: hsl(0, 0%, 90%);
 }
 
 /* Respect user preference */
 @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --color-bg: hsl(0, 0%, 10%);
-        --color-text: hsl(0, 0%, 90%);
-    }
+  :root:not([data-theme="light"]) {
+    --color-bg: hsl(0, 0%, 10%);
+    --color-text: hsl(0, 0%, 90%);
+  }
 }
 ```
 
------
+---
 
 ## JavaScript Guidelines
 
@@ -401,16 +444,16 @@ import { PerformanceMonitor } from './modules/PerformanceMonitor.js';
 
 // Initialize on DOM ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-    init();
+  init();
 }
 
 function init() {
-    new LazyLoader();
-    new MenuController();
-    new FormValidator();
-    new PerformanceMonitor();
+  new LazyLoader();
+  new MenuController();
+  new FormValidator();
+  new PerformanceMonitor();
 }
 ```
 
@@ -419,54 +462,54 @@ function init() {
 ```javascript
 // modules/MenuController.js
 export class MenuController {
-    constructor() {
-        this.menu = document.querySelector('[data-menu]');
-        this.trigger = document.querySelector('[data-menu-trigger]');
-        this.isOpen = false;
-        
-        if (this.menu && this.trigger) {
-            this.init();
-        }
-    }
+  constructor() {
+    this.menu = document.querySelector('[data-menu]');
+    this.trigger = document.querySelector('[data-menu-trigger]');
+    this.isOpen = false;
     
-    init() {
-        this.trigger.addEventListener('click', this.toggle.bind(this));
-        
-        // Escape key closes menu
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isOpen) {
-                this.close();
-            }
-        });
-        
-        // Click outside closes menu
-        document.addEventListener('click', (e) => {
-            if (this.isOpen && !this.menu.contains(e.target) && 
-                !this.trigger.contains(e.target)) {
-                this.close();
-            }
-        });
+    if (this.menu && this.trigger) {
+      this.init();
     }
+  }
+  
+  init() {
+    this.trigger.addEventListener('click', this.toggle.bind(this));
     
-    toggle() {
-        this.isOpen ? this.close() : this.open();
-    }
+    // Escape key closes menu
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isOpen) {
+        this.close();
+      }
+    });
     
-    open() {
-        this.menu.hidden = false;
-        this.trigger.setAttribute('aria-expanded', 'true');
-        this.isOpen = true;
-        
-        // Trap focus
-        this.menu.querySelector('a, button')?.focus();
-    }
+    // Click outside closes menu
+    document.addEventListener('click', (e) => {
+      if (this.isOpen && !this.menu.contains(e.target) && 
+          !this.trigger.contains(e.target)) {
+        this.close();
+      }
+    });
+  }
+  
+  toggle() {
+    this.isOpen ? this.close() : this.open();
+  }
+  
+  open() {
+    this.menu.hidden = false;
+    this.trigger.setAttribute('aria-expanded', 'true');
+    this.isOpen = true;
     
-    close() {
-        this.menu.hidden = true;
-        this.trigger.setAttribute('aria-expanded', 'false');
-        this.isOpen = false;
-        this.trigger.focus();
-    }
+    // Trap focus
+    this.menu.querySelector('a, button')?.focus();
+  }
+  
+  close() {
+    this.menu.hidden = true;
+    this.trigger.setAttribute('aria-expanded', 'false');
+    this.isOpen = false;
+    this.trigger.focus();
+  }
 }
 ```
 
@@ -477,33 +520,33 @@ export class MenuController {
 ```javascript
 // modules/LazyLoader.js
 export class LazyLoader {
-    constructor() {
-        this.images = document.querySelectorAll('img[loading="lazy"]');
-        this.imageObserver = null;
-        
-        // Fallback for browsers without native lazy loading
-        if (!('loading' in HTMLImageElement.prototype)) {
-            this.initIntersectionObserver();
-        }
-    }
+  constructor() {
+    this.images = document.querySelectorAll('img[loading="lazy"]');
+    this.imageObserver = null;
     
-    initIntersectionObserver() {
-        this.imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.add('is-loaded');
-                    this.imageObserver.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '50px 0px',
-            threshold: 0.01
-        });
-        
-        this.images.forEach(img => this.imageObserver.observe(img));
+    // Fallback for browsers without native lazy loading
+    if (!('loading' in HTMLImageElement.prototype)) {
+      this.initIntersectionObserver();
     }
+  }
+  
+  initIntersectionObserver() {
+    this.imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.classList.add('is-loaded');
+          this.imageObserver.unobserve(img);
+        }
+      });
+    }, {
+      rootMargin: '50px 0px',
+      threshold: 0.01
+    });
+    
+    this.images.forEach(img => this.imageObserver.observe(img));
+  }
 }
 ```
 
@@ -512,33 +555,33 @@ export class LazyLoader {
 ```javascript
 // modules/utils.js
 export function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
     };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
 
 export function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
+  let inThrottle;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
 }
 ```
 
 ### 3. Web Vitals Monitoring
 
-#### 3.1 PerformanceMonitor — Align to CSP and Static Scenario 
-```// modules/PerformanceMonitor.js
+```javascript
+// modules/PerformanceMonitor.js
 export class PerformanceMonitor {
   constructor() {
     this.initWebVitals();
@@ -549,18 +592,27 @@ export class PerformanceMonitor {
     const { onLCP, onINP, onCLS, onFCP, onTTFB } = await import(
       'https://cdn.jsdelivr.net/npm/web-vitals@3/dist/web-vitals.iife.js'
     );
-    const send = (m) => {
-      // Em site estático puro: integre com provider (ex.: Plausible, GA4) ou remova
-      // navigator.sendBeacon('/api/metrics', JSON.stringify(m));
-      console.log('[web-vitals]', m);
+    
+    const send = (metric) => {
+      // For static sites: integrate with analytics provider or remove
+      console.log('[web-vitals]', metric);
     };
-    onLCP(send); onINP(send); onCLS(send); onFCP(send); onTTFB(send);
+    
+    onLCP(send);
+    onINP(send);
+    onCLS(send);
+    onFCP(send);
+    onTTFB(send);
   }
 
   trackErrors() {
     window.addEventListener('error', (e) => {
-      const payload = { msg: e.message, src: e.filename, line: e.lineno, col: e.colno };
-      // navigator.sendBeacon('/api/errors', JSON.stringify(payload));
+      const payload = {
+        msg: e.message,
+        src: e.filename,
+        line: e.lineno,
+        col: e.colno
+      };
       console.warn('[error]', payload);
     });
   }
@@ -572,76 +624,76 @@ export class PerformanceMonitor {
 ```javascript
 // Progressive form enhancement
 class FormEnhancer {
-    constructor(form) {
-        this.form = form;
-        this.init();
-    }
+  constructor(form) {
+    this.form = form;
+    this.init();
+  }
+  
+  init() {
+    // Works without JS
+    this.form.addEventListener('submit', this.handleSubmit.bind(this));
     
-    init() {
-        // Works without JS
-        this.form.addEventListener('submit', this.handleSubmit.bind(this));
-        
-        // Enhanced features
-        this.addRealtimeValidation();
-        this.addAutoSave();
-    }
+    // Enhanced features
+    this.addRealtimeValidation();
+    this.addAutoSave();
+  }
+  
+  async handleSubmit(e) {
+    e.preventDefault();
     
-    async handleSubmit(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this.form);
-        
-        try {
-            const response = await fetch(this.form.action, {
-                method: this.form.method,
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            if (response.ok) {
-                this.showSuccess();
-            } else {
-                this.showError();
-            }
-        } catch (error) {
-            // Fallback to regular form submission
-            this.form.submit();
+    const formData = new FormData(this.form);
+    
+    try {
+      const response = await fetch(this.form.action, {
+        method: this.form.method,
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
         }
+      });
+      
+      if (response.ok) {
+        this.showSuccess();
+      } else {
+        this.showError();
+      }
+    } catch (error) {
+      // Fallback to regular form submission
+      this.form.submit();
     }
+  }
+  
+  addRealtimeValidation() {
+    const inputs = this.form.querySelectorAll('input, textarea, select');
     
-    addRealtimeValidation() {
-        const inputs = this.form.querySelectorAll('input, textarea, select');
-        
-        inputs.forEach(input => {
-            input.addEventListener('blur', () => this.validateField(input));
-        });
-    }
+    inputs.forEach(input => {
+      input.addEventListener('blur', () => this.validateField(input));
+    });
+  }
+  
+  validateField(field) {
+    const isValid = field.checkValidity();
     
-    validateField(field) {
-        const isValid = field.checkValidity();
-        
-        field.setAttribute('aria-invalid', !isValid);
-        
-        const errorEl = document.getElementById(field.getAttribute('aria-describedby'));
-        if (errorEl) {
-            errorEl.textContent = isValid ? '' : field.validationMessage;
-        }
-    }
+    field.setAttribute('aria-invalid', !isValid);
     
-    addAutoSave() {
-        const saveData = debounce(() => {
-            const data = new FormData(this.form);
-            localStorage.setItem(`form-${this.form.id}`, JSON.stringify(Object.fromEntries(data)));
-        }, 1000);
-        
-        this.form.addEventListener('input', saveData);
+    const errorEl = document.getElementById(field.getAttribute('aria-describedby'));
+    if (errorEl) {
+      errorEl.textContent = isValid ? '' : field.validationMessage;
     }
+  }
+  
+  addAutoSave() {
+    const saveData = debounce(() => {
+      const data = new FormData(this.form);
+      localStorage.setItem(`form-${this.form.id}`, JSON.stringify(Object.fromEntries(data)));
+    }, 1000);
+    
+    this.form.addEventListener('input', saveData);
+  }
 }
 ```
 
------
+---
 
 ## Performance Optimization
 
@@ -651,46 +703,46 @@ class FormEnhancer {
 
 ```html
 <picture>
-    <!-- AVIF for cutting-edge browsers -->
-    <source 
-        type="image/avif"
-        srcset="
-            /img/hero-400w.avif 400w,
-            /img/hero-800w.avif 800w,
-            /img/hero-1200w.avif 1200w,
-            /img/hero-1600w.avif 1600w"
-        sizes="(max-width: 640px) 100vw, 
-               (max-width: 1024px) 80vw, 
-               1200px">
-    
-    <!-- WebP for modern browsers -->
-    <source 
-        type="image/webp"
-        srcset="
-            /img/hero-400w.webp 400w,
-            /img/hero-800w.webp 800w,
-            /img/hero-1200w.webp 1200w,
-            /img/hero-1600w.webp 1600w"
-        sizes="(max-width: 640px) 100vw, 
-               (max-width: 1024px) 80vw, 
-               1200px">
-    
-    <!-- JPEG fallback -->
-    <img 
-        src="/img/hero-800w.jpg"
-        srcset="
-            /img/hero-400w.jpg 400w,
-            /img/hero-800w.jpg 800w,
-            /img/hero-1200w.jpg 1200w"
-        sizes="(max-width: 640px) 100vw, 
-               (max-width: 1024px) 80vw, 
-               1200px"
-        alt="Hero image description"
-        width="1200"
-        height="600"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async">
+  <!-- AVIF for cutting-edge browsers -->
+  <source 
+    type="image/avif"
+    srcset="
+      /img/hero-400w.avif 400w,
+      /img/hero-800w.avif 800w,
+      /img/hero-1200w.avif 1200w,
+      /img/hero-1600w.avif 1600w"
+    sizes="(max-width: 640px) 100vw, 
+           (max-width: 1024px) 80vw, 
+           1200px">
+  
+  <!-- WebP for modern browsers -->
+  <source 
+    type="image/webp"
+    srcset="
+      /img/hero-400w.webp 400w,
+      /img/hero-800w.webp 800w,
+      /img/hero-1200w.webp 1200w,
+      /img/hero-1600w.webp 1600w"
+    sizes="(max-width: 640px) 100vw, 
+           (max-width: 1024px) 80vw, 
+           1200px">
+  
+  <!-- JPEG fallback -->
+  <img 
+    src="/img/hero-800w.jpg"
+    srcset="
+      /img/hero-400w.jpg 400w,
+      /img/hero-800w.jpg 800w,
+      /img/hero-1200w.jpg 1200w"
+    sizes="(max-width: 640px) 100vw, 
+           (max-width: 1024px) 80vw, 
+           1200px"
+    alt="Hero image description"
+    width="1200"
+    height="600"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async">
 </picture>
 ```
 
@@ -698,190 +750,140 @@ class FormEnhancer {
 
 ```html
 <head>
-    <!-- DNS Prefetch for external domains -->
-    <link rel="dns-prefetch" href="https://cdn.example.com">
-    <link rel="dns-prefetch" href="https://analytics.example.com">
-    
-    <!-- Preconnect for critical origins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/css/critical.css" as="style">
-    <link rel="preload" href="/js/main.js" as="script">
-    
-    <!-- Prefetch next page resources -->
-    <link rel="prefetch" href="/page2.html">
-    <link rel="prefetch" href="/css/page2.css">
-    
-    <!-- Module preload for ES6 modules -->
-    <link rel="modulepreload" href="/js/modules/critical.js">
+  <!-- DNS Prefetch for external domains -->
+  <link rel="dns-prefetch" href="https://cdn.example.com">
+  <link rel="dns-prefetch" href="https://analytics.example.com">
+  
+  <!-- Preconnect for critical origins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/css/critical.css" as="style">
+  <link rel="preload" href="/js/main.js" as="script">
+  
+  <!-- Prefetch next page resources -->
+  <link rel="prefetch" href="/page2.html">
+  <link rel="prefetch" href="/css/page2.css">
+  
+  <!-- Module preload for ES6 modules -->
+  <link rel="modulepreload" href="/js/modules/critical.js">
 </head>
 ```
 
 ### 3. Service Worker Implementation
 
-#### 3.1 Service Worker — choose ONE approach
-#### 3.1.1 Use manual sw.js: keep your “Service Worker Implementation” section and remove VitePWA from vite.config.js.
-#### 3.1.1.1 Or use VitePWA: remove the sw.js block from this guide.
-
 ```javascript
 // sw.js
 const CACHE_VERSION = 'v1.0.0';
 const CACHE_NAMES = {
-    static: `static-${CACHE_VERSION}`,
-    dynamic: `dynamic-${CACHE_VERSION}`,
-    images: `images-${CACHE_VERSION}`
+  static: `static-${CACHE_VERSION}`,
+  dynamic: `dynamic-${CACHE_VERSION}`,
+  images: `images-${CACHE_VERSION}`
 };
 
 // Install event
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAMES.static).then((cache) => {
-            return cache.addAll([
-                '/',
-                '/css/main.css',
-                '/js/main.js',
-                '/offline.html'
-            ]);
-        })
-    );
-    self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAMES.static).then((cache) => {
+      return cache.addAll([
+        '/',
+        '/css/main.css',
+        '/js/main.js',
+        '/offline.html'
+      ]);
+    })
+  );
+  self.skipWaiting();
 });
 
 // Activate event
 self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames
-                    .filter((cacheName) => {
-                        return !Object.values(CACHE_NAMES).includes(cacheName);
-                    })
-                    .map((cacheName) => caches.delete(cacheName))
-            );
-        })
-    );
-    self.clients.claim();
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter((cacheName) => {
+            return !Object.values(CACHE_NAMES).includes(cacheName);
+          })
+          .map((cacheName) => caches.delete(cacheName))
+      );
+    })
+  );
+  self.clients.claim();
 });
 
 // Fetch strategies
 self.addEventListener('fetch', (event) => {
-    const { request } = event;
-    const url = new URL(request.url);
-    
-    // Skip non-GET requests
-    if (request.method !== 'GET') return;
-    
-    // HTML: Network first, fallback to cache
-    if (request.headers.get('accept')?.includes('text/html')) {
-        event.respondWith(
-            fetch(request)
-                .then((response) => {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAMES.dynamic).then((cache) => {
-                        cache.put(request, responseClone);
-                    });
-                    return response;
-                })
-                .catch(() => caches.match(request))
-                .catch(() => caches.match('/offline.html'))
-        );
-        return;
-    }
-    
-    // Images: Cache first
-    if (request.destination === 'image') {
-        event.respondWith(
-            caches.match(request).then((response) => {
-                return response || fetch(request).then((response) => {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAMES.images).then((cache) => {
-                        cache.put(request, responseClone);
-                    });
-                    return response;
-                });
-            })
-        );
-        return;
-    }
-    
-    // CSS/JS: Cache first with network update
-    if (request.destination === 'style' || request.destination === 'script') {
-        event.respondWith(
-            caches.match(request).then((response) => {
-                const fetchPromise = fetch(request).then((networkResponse) => {
-                    caches.open(CACHE_NAMES.static).then((cache) => {
-                        cache.put(request, networkResponse.clone());
-                    });
-                    return networkResponse;
-                });
-                return response || fetchPromise;
-            })
-        );
-    }
-});
-```
-
-#### 3.2 Below is vite.config.js without VitePWA
-```javascript
-// vite.config.js
-import { defineConfig } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
-import viteCompression from 'vite-plugin-compression';
-import viteImagemin from 'vite-plugin-imagemin';
-
-export default defineConfig({
-  root: 'src',
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: { main: 'src/index.html', about: 'src/about.html' },
-      output: {
-        assetFileNames: 'assets/[name]-[hash][extname]',
-        chunkFileNames: 'js/[name]-[hash].js',
-        entryFileNames: 'js/[name]-[hash].js'
-      }
-    },
-    minify: 'terser',
-    terserOptions: { compress: { drop_console: true, drop_debugger: true } },
-    cssMinify: true,
-    assetsInlineLimit: 4096,
-    reportCompressedSize: true
-  },
-  plugins: [
-    createHtmlPlugin({ minify: true }),
-    viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
-    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
-    viteImagemin({
-      gifsicle:{optimizationLevel:3}, optipng:{optimizationLevel:5},
-      mozjpeg:{quality:75}, pngquant:{quality:[0.65,0.9],speed:4},
-      svgo:{ plugins:[{name:'removeViewBox',active:false},{name:'removeEmptyAttrs',active:true}] },
-      webp:{quality:75}, avif:{quality:50}
-    })
-  ],
-  css: { postcss: './postcss.config.js' },
-  server: { port: 3000, https: true, open: true },
-  preview: { port: 8080, https: true }
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') return;
+  
+  // HTML: Network first, fallback to cache
+  if (request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAMES.dynamic).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => caches.match(request))
+        .catch(() => caches.match('/offline.html'))
+    );
+    return;
+  }
+  
+  // Images: Cache first
+  if (request.destination === 'image') {
+    event.respondWith(
+      caches.match(request).then((response) => {
+        return response || fetch(request).then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAMES.images).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          return response;
+        });
+      })
+    );
+    return;
+  }
+  
+  // CSS/JS: Cache first with network update
+  if (request.destination === 'style' || request.destination === 'script') {
+    event.respondWith(
+      caches.match(request).then((response) => {
+        const fetchPromise = fetch(request).then((networkResponse) => {
+          caches.open(CACHE_NAMES.static).then((cache) => {
+            cache.put(request, networkResponse.clone());
+          });
+          return networkResponse;
+        });
+        return response || fetchPromise;
+      })
+    );
+  }
 });
 ```
 
 ### 4. Speculation Rules API
 
-#### 4.1 Speculation Rules — Use nonce or external file 
+#### 4.1 External File Approach (Recommended)
+
 ```html
 <head>
-<link rel="speculationrules" href="/speculation-rules.json">
-<script type="speculationrules" nonce="{NONCE}">
-{
-  "prerender": [{"source":"list","urls":["/about","/products","/contact"]}],
-  "prefetch": [{"source":"document","where":{"selector_matches":"a[href]"},"eagerness":"conservative"}]
-}
-</script>
+  <link rel="speculationrules" href="/speculation-rules.json">
+</head>
 ```
-#### 4.2 Create public/speculation-rules.json (or serve in /speculation-rules.json) 
+
+Create `/speculation-rules.json`:
+
 ```json
 {
   "prerender": [
@@ -899,122 +901,81 @@ export default defineConfig({
     }
   ],
   "prefetch": [
-    { "source": "document", "where": { "selector_matches": "a[href]" }, "eagerness": "conservative" }
+    { 
+      "source": "document", 
+      "where": { "selector_matches": "a[href]" }, 
+      "eagerness": "conservative" 
+    }
   ]
 }
 ```
 
------
+### 5. Build Configuration
 
-## Security Implementation
-
-### 1. Content Security Policy
-
-#### 1.1 Security — Updated CSP and Headers
-CSP (nonce + strict-dynamic; no frame-src; no unsafe-inline) -->
-```javascript
-// Header generation (example)
-const cspPolicy = {
-  "default-src": ["'self'"],
-  "script-src": ["'self'", "'nonce-{NONCE}'", "'strict-dynamic'", "https://cdn.jsdelivr.net"],
-  "style-src": ["'self'", "'nonce-{NONCE}'"],
-  "img-src": ["'self'", "data:", "https:"],
-  "font-src": ["'self'", "https://fonts.gstatic.com"],
-  "connect-src": ["'self'", "https://api.example.com"],
-  "object-src": ["'none'"],
-  "base-uri": ["'self'"],
-  "frame-ancestors": ["'none'"]
-};
-
-// Generate CSP header string
-const cspString = Object.entries(cspPolicy)
-    .map(([directive, values]) => `${directive} ${values.join(' ')}`)
-    .join('; ');
-```
-
-### 2. Security Headers
-
-#### 2.1 Headers (Apache/nginx) 
-```nginx
-# Remove: X-XSS-Protection (deprecated)
-Header always set X-Content-Type-Options "nosniff"
-Header always set Referrer-Policy "strict-origin-when-cross-origin"
-Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-Header always set X-Frame-Options "SAMEORIGIN"   # opcional como fallback a frame-ancestors
-# Permissions-Policy sintaxe moderna
-Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-```
-
-#### 2.2 nginx (equivalent)
-```pgsql
-add_header X-Content-Type-Options "nosniff";
-add_header Referrer-Policy "strict-origin-when-cross-origin";
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-add_header Permissions-Policy "geolocation=(), microphone=(), camera=()";
-# X-Frame-Options opcional como fallback:
-add_header X-Frame-Options "SAMEORIGIN";
-```
-
-### 3. Subresource Integrity
-
-```html
-<!-- External resources with SRI -->
-<link 
-    rel="stylesheet" 
-    href="https://cdn.jsdelivr.net/npm/modern-normalize@2.0.0/modern-normalize.min.css"
-    integrity="sha384-HASH"
-    crossorigin="anonymous">
-
-<script 
-    src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.0/dist/cdn.min.js"
-    integrity="sha384-HASH"
-    crossorigin="anonymous"
-    defer></script>
-```
-
-### 4. Input Sanitization
+#### 5.1 Vite Configuration
 
 ```javascript
-// HTML sanitization utility
-class Sanitizer {
-    static escapeHtml(unsafe) {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-    
-    static sanitizeUrl(url) {
-        const allowedProtocols = ['http:', 'https:', 'mailto:'];
-        try {
-            const urlObj = new URL(url);
-            if (!allowedProtocols.includes(urlObj.protocol)) {
-                return '#';
-            }
-            return url;
-        } catch {
-            return '#';
-        }
-    }
-    
-    static sanitizeUserContent(content) {
-        // Use DOMPurify for complex sanitization
-        if (window.DOMPurify) {
-            return DOMPurify.sanitize(content, {
-                ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
-                ALLOWED_ATTR: ['href', 'target', 'rel']
-            });
-        }
-        return this.escapeHtml(content);
-    }
-}
+// vite.config.js
+import { defineConfig } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
+import viteCompression from 'vite-plugin-compression';
+import viteImagemin from 'vite-plugin-imagemin';
+
+export default defineConfig({
+  root: 'src',
+  build: {
+    outDir: '../dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: { 
+        main: 'src/index.html', 
+        about: 'src/about.html' 
+      },
+      output: {
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js'
+      }
+    },
+    minify: 'terser',
+    terserOptions: { 
+      compress: { 
+        drop_console: true, 
+        drop_debugger: true 
+      } 
+    },
+    cssMinify: true,
+    assetsInlineLimit: 4096,
+    reportCompressedSize: true
+  },
+  plugins: [
+    createHtmlPlugin({ minify: true }),
+    viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
+    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
+    viteImagemin({
+      gifsicle: { optimizationLevel: 3 },
+      optipng: { optimizationLevel: 5 },
+      mozjpeg: { quality: 75 },
+      pngquant: { quality: [0.65, 0.9], speed: 4 },
+      svgo: { 
+        plugins: [
+          { name: 'removeViewBox', active: false },
+          { name: 'removeEmptyAttrs', active: true }
+        ] 
+      },
+      webp: { quality: 75 },
+      avif: { quality: 50 }
+    })
+  ],
+  css: { postcss: './postcss.config.js' },
+  server: { port: 3000, https: true, open: true },
+  preview: { port: 8080, https: true }
+});
 ```
 
------
+## PostCSS Configuration
 
-### 3. PostCSS Configuration
+### 5.2 PostCSS Configuration
 
 ```javascript
 // postcss.config.js
@@ -1069,9 +1030,10 @@ export default {
 };
 ```
 
-#### 3.1 Reinforce the Purge safelist
+### 5.3 Reinforced PurgeCSS Safelist
+
 ```javascript
-// postcss.config.js (trecho PurgeCSS)
+// postcss.config.js (PurgeCSS section)
 purgecss({
   content: ['./src/**/*.html', './src/**/*.js'],
   safelist: {
@@ -1082,7 +1044,42 @@ purgecss({
 })
 ```
 
------
+---
+
+## Build & Deployment
+
+### 6.1 Versioned Assets & Caching Strategy
+
+```nginx
+# CDN configuration with Brotli/HTTP3 enabled
+# CI/CD pipeline: build → tests (lint/a11y/LHCI) → deploy → cache purge (e.g., Cloudflare)
+
+location ~* \.(css|js|png|jpg|svg|woff2)$ {
+  add_header Cache-Control "public, max-age=31536000, immutable";
+}
+
+location ~* \.(html)$ {
+  add_header Cache-Control "no-cache";
+}
+```
+
+### 6.2 Build Script Configuration
+
+```json
+{
+  "scripts": {
+    "build": "npm run clean && npm run build:css && npm run build:js && npm run build:html",
+    "build:css": "postcss src/css/main.css -o dist/css/main.css",
+    "build:js": "esbuild src/js/main.js --bundle --minify --outfile=dist/js/main.js",
+    "build:html": "node scripts/build-html.js",
+    "clean": "rimraf dist",
+    "serve": "serve dist -p 3000",
+    "preview": "npm run build && npm run serve"
+  }
+}
+```
+
+---
 
 ## Quality Assurance
 
@@ -1113,8 +1110,12 @@ export default {
         }
     }
 };
+```
 
-// Example test: tests/FormValidator.test.js
+**Example Test:**
+
+```javascript
+// tests/FormValidator.test.js
 import { FormValidator } from '../src/modules/FormValidator.js';
 
 describe('FormValidator', () => {
@@ -1188,8 +1189,12 @@ export default {
         reuseExistingServer: !process.env.CI
     }
 };
+```
 
-// Example E2E test: tests/e2e/navigation.spec.js
+**Example E2E Test:**
+
+```javascript
+// tests/e2e/navigation.spec.js
 import { test, expect } from '@playwright/test';
 
 test.describe('Navigation', () => {
@@ -1271,7 +1276,11 @@ test.describe('Navigation', () => {
 }
 ```
 
-### 3. Monitoring Script
+---
+
+## Performance Monitoring
+
+### Real User Monitoring (RUM)
 
 ```javascript
 // monitoring/rum.js
@@ -1372,7 +1381,47 @@ class RealUserMonitoring {
 new RealUserMonitoring();
 ```
 
------
+### Google Analytics 4 (CSP Compatible)
+
+```html
+<!-- GA4 with CSP nonce -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXX" nonce="{NONCE}"></script>
+<script nonce="{NONCE}">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXX');
+</script>
+```
+
+### Speculation Rules API
+
+```html
+<link rel="speculationrules" href="/speculation-rules.json">
+```
+
+```json
+// speculation-rules.json
+{
+  "prerender": [
+    {
+      "source": "list",
+      "urls": ["/about", "/products", "/contact"]
+    }
+  ],
+  "prefetch": [
+    {
+      "source": "document",
+      "where": {
+        "selector_matches": "a[href]"
+      },
+      "eagerness": "conservative"
+    }
+  ]
+}
+```
+
+---
 
 ## 📚 Additional Resources
 
@@ -1402,33 +1451,111 @@ new RealUserMonitoring();
 - [Can I Use](https://caniuse.com/)
 - [web.dev](https://web.dev/)
 
------
+---
 
-## 🎯 Checklist for Production
+## 🎯 Production Checklist
 
+### Code Quality
 - [ ] All HTML validated
 - [ ] All CSS validated
 - [ ] JavaScript linted without errors
+- [ ] TypeScript compiled without errors (if applicable)
+
+### Performance
 - [ ] Lighthouse score > 95 on all metrics
+- [ ] Core Web Vitals within recommended thresholds
+- [ ] Performance budget met
+- [ ] Images optimized and properly sized
+- [ ] Critical CSS inlined
+- [ ] JavaScript bundles optimized
+
+### Accessibility
 - [ ] WCAG 2.1 AA compliance verified
+- [ ] Screen reader tested
+- [ ] Keyboard navigation functional
+- [ ] Color contrast ratios validated
+- [ ] Alt text for all images
+
+### Security
 - [ ] Security headers configured
-- [ ] SSL certificate valid
-- [ ] Sitemap.xml generated
+- [ ] SSL certificate valid and configured
+- [ ] CSP (Content Security Policy) implemented
+- [ ] No mixed content warnings
+
+### SEO & Metadata
+- [ ] Sitemap.xml generated and submitted
 - [ ] Robots.txt configured
-- [ ] 404 page created
-- [ ] Favicons for all platforms
+- [ ] Meta descriptions for all pages
 - [ ] Open Graph images created (1200x630)
+- [ ] Schema.org markup implemented
+- [ ] Canonical URLs set
+
+### Progressive Web App
 - [ ] Service Worker registered
 - [ ] Manifest.json configured
-- [ ] Analytics/monitoring configured
-- [ ] Performance budget met
-- [ ] Cross-browser tested
-- [ ] Mobile responsive verified
-- [ ] Forms tested
-- [ ] CDN configured
-- [ ] Backup strategy implemented
-- [ ] Documentation updated
+- [ ] Offline functionality tested
+- [ ] Add to homescreen prompt working
 
------
+### Monitoring & Analytics
+- [ ] Analytics/monitoring configured
+- [ ] Error tracking implemented
+- [ ] Performance monitoring active
+- [ ] Search Console configured
+
+### Infrastructure
+- [ ] CDN configured and tested
+- [ ] Backup strategy implemented
+- [ ] 404 page created and styled
+- [ ] Favicons for all platforms generated
+
+### Testing
+- [ ] Cross-browser tested (Chrome, Firefox, Safari, Edge)
+- [ ] Mobile responsive verified
+- [ ] Forms tested and validated
+- [ ] All interactive elements tested
+
+### Documentation
+- [ ] README updated with project information
+- [ ] Code documented appropriately
+- [ ] Deployment instructions documented
+- [ ] Environment variables documented
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd <project-name>
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+5. **Preview production build**
+   ```bash
+   npm run preview
+   ```
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 *This README serves as the comprehensive technical specification for static site development following industry best practices and modern web standards.*
