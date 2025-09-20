@@ -19,8 +19,9 @@
     - [robots.txt](#robotstxt)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
-  - hreflang block
-  - Page-level robots for utility pages
+  - [hreflang block](#)
+  - [Page-level robots for utility pages](#)
+  - [Web App Manifest](#)
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#itcss--bem-methodology-with-css-layers)
@@ -79,7 +80,6 @@
   - [Service Worker Implementation](#service-worker-implementation)
 
 - [Security Implementation](#security-implementation)
-  - [Security Headers](#)
     - [Security headers beyond CSP](#)
     - [Subresource Integrity](#)
   - [Performance Monitoring](#performance-monitoring)
@@ -91,6 +91,7 @@
     - [Trusted Types (Chromium hardening; harmless elsewhere)](#add--trusted-types-chromium-hardening-harmless-elsewhere)
     - [Input sanitization section (expand with URL and HTML guards)](#input-sanitization-section-expand-with-url-and-html-guards)
     - [DOMPurify usage (self-host ESM + CSP-friendly)](#dompurify-usage-self-host-esm--csp-friendly)
+  - [Security Headers](#)
 
   - [Analytics Implementation]()
     - [Google Analytics 4](#google-analytics-4-csp-compatible)
@@ -444,6 +445,58 @@ Sitemap: https://example.com/sitemap.xml
   </main>
 </body>
 </html>
+```
+
+## Web App Manifest + link
+
+```json
+{
+  "name": "Site Name",
+  "short_name": "Site",
+  "start_url": "%BASE_URL%index.html",
+  "scope": "%BASE_URL%",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b5fff",
+  "icons": [
+    {"src":"%BASE_URL%icons/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"%BASE_URL%icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
+```
+
+- public/manifest.webmanifest
+
+```html
+<link rel="manifest" href="%BASE_URL%manifest.webmanifest">
+```
+
+## WebSite JSON-LD (sitelinks search box)
+
+```html
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"WebSite",
+ "@id":"https://domain.com/#website",
+ "url":"https://domain.com/",
+ "name":"Brand",
+ "publisher":{"@id":"https://domain.com/#organization"},
+ "potentialAction":{
+   "@type":"SearchAction",
+   "target":"https://domain.com/search?q={search_term_string}",
+   "query-input":"required name=search_term_string"
+ }
+}
+</script>
+```
+
+```html
+## hreflang block (only if you have locales)
+
+<link rel="alternate" hreflang="pt-BR" href="https://example.com/">
+<link rel="alternate" hreflang="en"    href="https://example.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://example.com/">
 ```
 
 #### Notes:
@@ -1848,6 +1901,33 @@ function safeHref(el, url) {
 - Put the policy in infrastructure config (`_headers`, `netlify.toml`, `nginx.conf`) not in meta tags.
 - If you later add GA4 or other third parties, update `connect-src` and `img-src` only. Keep `script-src` nonce-based.
 - Prefer no inline scripts/styles. If you must, use nonces or hashes.
+
+## Security headers
+
+### Security headers beyond CSP
+
+```http
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: geolocation=(), microphone=(), camera=(), browsing-topics=()
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+```
+
+## Subresource Integrity
+
+### Subresource Integrity for any third-party JS you pin (not GA)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/itty-router@4.0.23/index.min.js"
+        integrity="sha384-<HASH>" crossorigin="anonymous"></script>
+```
+
+- Create hash: curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A
+
+#### **Note:** 
+- Keep COEP off unless you need cross-origin isolation.
 
 # Quality Assurance
 
