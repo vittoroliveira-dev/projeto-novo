@@ -1061,13 +1061,6 @@ sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
 
 ---
 
-## Contributing
-
-Feel free to submit issues and enhancement requests! This guide aims to stay current with modern web standards and browser capabilities.
-
-## License
-
-This guide is released under the MIT License. Feel free to use and modify as needed.
 ### 2. Resource Hints & Preloading
 
 ```html
