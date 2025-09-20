@@ -585,54 +585,74 @@ Sitemap: https://example.com/sitemap.xml
 #### Critical CSS Strategy
 
 ```css
-/* Inline in <head> - Above the fold styles only */
-body { margin: 0; font-family: system-ui; }
-.l-header { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.l-hero { min-height: 60vh; display: flex; align-items: center; }
+/* Critical CSS (trimmed, CLS-safe, motion-safe) */
+/* Inline in <head> — above-the-fold only */
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--color-bg, #fff);
+  color: var(--color-text, #111);
+  text-rendering: optimizeLegibility;
+}
+.l-header { background:#fff; box-shadow:0 2px 4px rgb(0 0 0 / .08); }
+.l-hero { min-block-size: 60svh; display:grid; place-items:center; }
+img, svg { display:block; max-width:100%; height:auto; }
+@media (prefers-reduced-motion: reduce){
+  * { animation:none !important; transition:none !important; scroll-behavior:auto; }
+}
 ```
 
 #### Font Loading Optimization
 
 ```css
-@font-face {
-  font-family: 'CustomFont';
-  src: url('/fonts/custom.woff2') format('woff2');
-  font-display: swap;
-  font-weight: 400;
+/* Font loading (variable-friendly, Vite base, subsets) */
+ @font-face {
+   font-family: 'CustomFont';
+  src: url('%BASE_URL%fonts/custom.woff2') format('woff2');
+  font-display: swap; /* consider 'optional' if FOUT is undesirable */
   font-style: normal;
+  font-weight: 300 700; /* variable range or set exact weights */
   size-adjust: 105%;
   ascent-override: 90%;
   descent-override: 10%;
   line-gap-override: 0%;
-}
+  unicode-range: U000-5FF; /* add extended ranges as needed */
+ }
 ```
 
 ### Dark Mode Implementation
 
 ```css
-/* Automatic dark mode */
-:root {
-  color-scheme: light dark;
-}
-
-/* Custom properties for themes */
+ /* Dark mode (apply vars to body, add accent color) */
+ /* Automatic dark mode */
+ :root {
+   color-scheme: light dark;
+ }
+ 
+ /* Custom properties for themes */
 [data-theme="light"] {
-  --color-bg: hsl(0, 0%, 100%);
-  --color-text: hsl(0, 0%, 10%);
-}
+   --color-bg: hsl(0, 0%, 100%);
+   --color-text: hsl(0, 0%, 10%);
+  --accent: hsl(220 80% 50%);
+ }
+ 
+ [data-theme="dark"] {
+   --color-bg: hsl(0, 0%, 10%);
+   --color-text: hsl(0, 0%, 90%);
+  --accent: hsl(220 80% 60%);
+ }
+ 
+ /* Respect user preference */
+ @media (prefers-color-scheme: dark) {
+   :root:not([data-theme="light"]) {
+     --color-bg: hsl(0, 0%, 10%);
+     --color-text: hsl(0, 0%, 90%);
+   }
+ }
 
-[data-theme="dark"] {
-  --color-bg: hsl(0, 0%, 10%);
-  --color-text: hsl(0, 0%, 90%);
-}
-
-/* Respect user preference */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-bg: hsl(0, 0%, 10%);
-    --color-text: hsl(0, 0%, 90%);
-  }
-}
+/* Apply theme to actual paint */
+body { background-color: var(--color-bg); color: var(--color-text); accent-color: var(--accent); }
 ```
 
 ---
@@ -664,6 +684,11 @@ function init() {
   new PerformanceMonitor();
 }
 ```
+
+#### **Notes:**
+- Use `svh` for stable viewport on mobile to reduce jumps from browser UI.
+- Ensure hero image has explicit `width` and `height` in HTML to minimize CLS.
+- Consider `font-display: optional` if late font swap hurts layout.
 
 ### Component Class Pattern
 
@@ -882,6 +907,10 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
  }
 ```
 
+#### **Notes:**
+- Keep `loading="eager"` and `fetchpriority="high"` only for the single above-the-fold hero image; lazy-load the rest.
+- If CSP is strict, self-host `web-vitals` and avoid inline code.
+
 ---
 
 # Performance Optimization
@@ -891,64 +920,74 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 #### Responsive Images Implementation
 
 ```html
-<picture>
-  <!-- AVIF for cutting-edge browsers -->
-  <source 
-    type="image/avif"
-    srcset="
-      /img/hero-400w.avif 400w,
-      /img/hero-800w.avif 800w,
-      /img/hero-1200w.avif 1200w,
-      /img/hero-1600w.avif 1600w"
-    sizes="(max-width: 640px) 100vw, 
-           (max-width: 1024px) 80vw, 
-           1200px">
-  
-  <!-- WebP for modern browsers -->
-  <source 
-    type="image/webp"
-    srcset="
-      /img/hero-400w.webp 400w,
-      /img/hero-800w.webp 800w,
-      /img/hero-1200w.webp 1200w,
-      /img/hero-1600w.webp 1600w"
-    sizes="(max-width: 640px) 100vw, 
-           (max-width: 1024px) 80vw, 
-           1200px">
-  
-  <!-- JPEG fallback -->
-  <img 
-    src="/img/hero-800w.jpg"
-    srcset="
-      /img/hero-400w.jpg 400w,
-      /img/hero-800w.jpg 800w,
-      /img/hero-1200w.jpg 1200w"
-    sizes="(max-width: 640px) 100vw, 
-           (max-width: 1024px) 80vw, 
-           1200px"
-    alt="Hero image description"
-    width="1200"
-    height="600"
-    loading="eager"
-    fetchpriority="high"
-    decoding="async">
-</picture>
+<-- <picture> (use %BASE_URL%, add JPG 1600w, keep fetchpriority only for LCP) -->
+ <picture>
+  <!-- AVIF (optional; remove if you don't ship it) -->
+   <source 
+     type="image/avif"
+     srcset="
+      %BASE_URL%img/hero-400w.avif 400w,
+      %BASE_URL%img/hero-800w.avif 800w,
+      %BASE_URL%img/hero-1200w.avif 1200w,
+      %BASE_URL%img/hero-1600w.avif 1600w"
+     sizes="(max-width: 640px) 100vw, 
+            (max-width: 1024px) 80vw, 
+            1200px">
+   
+   <!-- WebP for modern browsers -->
+   <source 
+     type="image/webp"
+     srcset="
+      %BASE_URL%img/hero-400w.webp 400w,
+      %BASE_URL%img/hero-800w.webp 800w,
+      %BASE_URL%img/hero-1200w.webp 1200w,
+      %BASE_URL%img/hero-1600w.webp 1600w"
+     sizes="(max-width: 640px) 100vw, 
+            (max-width: 1024px) 80vw, 
+            1200px">
+   
+   <!-- JPEG fallback -->
+   <img 
+    src="%BASE_URL%img/hero-800w.jpg"
+     srcset="
+      %BASE_URL%img/hero-400w.jpg 400w,
+      %BASE_URL%img/hero-800w.jpg 800w,
+      %BASE_URL%img/hero-1200w.jpg 1200w,
+      %BASE_URL%img/hero-1600w.jpg 1600w"
+     sizes="(max-width: 640px) 100vw, 
+            (max-width: 1024px) 80vw, 
+            1200px"
+     alt="Hero image description"
+     width="1200"
+     height="600"
+    loading="eager" fetchpriority="high"  <!-- drop both if not LCP -->
+     decoding="async">
+ </picture>
 ```
 
-```css
+```html
+<-- Preload LCP image in <head> (matches sources) -->
+<link rel="preload" as="image"
+  imagesrcset="%BASE_URL%img/hero-800w.webp 800w, %BASE_URL%img/hero-1200w.webp 1200w, %BASE_URL%img/hero-1600w.webp 1600w"
+  imagesizes="(max-width: 1024px) 80vw, 1200px"
+  href="%BASE_URL%img/hero-1200w.jpg">
+```
 
 ##### CSS fallback in a single rule (simpler)
 
-.hero-background {
-  background-image: url("/img/bg.jpg"); /* fallback */
-  background-image: image-set(
-    url("/img/bg.avif") type("image/avif"),
-    url("/img/bg.webp") type("image/webp"),
-    url("/img/bg.jpg") type("image/jpeg")
-  );
-  background-size: cover;
-  background-position: center;
-}
+```css
+   /* CSS background fallback (base path + no-repeat) */
+ .hero-background {
+  background-image: url("%BASE_URL%img/bg.jpg"); /* fallback */
+   background-image: image-set(
+    url("%BASE_URL%img/bg.avif") type("image/avif"),
+    url("%BASE_URL%img/bg.webp") type("image/webp"),
+    url("%BASE_URL%img/bg.jpg") type("image/jpeg")
+   );
+   background-size: cover;
+   background-position: center;
+  background-repeat: no-repeat;
+ }
 ```
 
 ### Modern Image Formats Guide
