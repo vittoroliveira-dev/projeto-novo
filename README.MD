@@ -2048,6 +2048,17 @@ test.describe('Navigation', () => {
 - [ ] CSP (Content Security Policy) implemented
 - [ ] No mixed content warnings
 
+## JavaScript Performance
+
+- [ ] JS ≤150 KB gzipped on first load.
+- [ ] No long tasks >50 ms during interactions.
+- [ ] All event listeners passive where safe.
+- [ ] All non-critical modules lazy via dynamic import.
+- [ ] Preload only the next most-likely module.
+- [ ] AbortController used for navigations.
+- [ ] Workers used for heavy compute/parse.
+- [ ] Budget enforced in CI (INP < 200 ms, TBT < 200 ms).
+
 ## SEO & Metadata
 - [ ] Sitemap.xml generated and submitted
 - [ ] Robots.txt configured
