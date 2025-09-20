@@ -374,6 +374,9 @@
 User-agent: *
 Disallow:
 Sitemap: https://example.com/sitemap.xml
+# Staging (usar outro arquivo): 
+# User-agent: * 
+# Disallow: /
 ```
 
 ### sitemap.xml
@@ -384,24 +387,35 @@ Sitemap: https://example.com/sitemap.xml
     <loc>https://example.com/</loc>
     <lastmod>2025-09-01</lastmod>
   </url>
+  <!-- Add other canonical URLs, absolute only -->
 </urlset>
 ```
 
 ### 404.html
 ```html
-<main>
-  <h1>Page not found (404)</h1>
-  <p>Try the <a href="/">home page</a></p>
-</main>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Página não encontrada — 404</title>
+  <link rel="stylesheet" href="%BASE_URL%styles/main.css">
+</head>
+<body>
+  <main id="main">
+    <h1>Página não encontrada (404)</h1>
+    <p>Voltar para a <a href="%BASE_URL%">página inicial</a>.</p>
+  </main>
+</body>
+</html>
 ```
 
-### Server Configuration (nginx)
-```nginx
-error_page 404 /404.html;
-location = /404.html { 
-  internal; 
-}
-```
+#### Notes:
+
+- Place robots.txt, sitemap.xml, and 404.html in the public/ directory so they are output to the site's root when using Vite.
+- Use a meta robots tag on the 404 page to prevent the /404.html URL from being indexed when accessed directly.
+- Sitemap URLs must always be absolute and canonical. If possible, update the lastmod dates automatically during the build process.
 
 ---
 
@@ -412,107 +426,159 @@ location = /404.html {
 ### Layer Structure
 
 ```css
+/* layer and base structure */
 /* main.css */
-@layer reset, base, layout, components, utilities;
-
-@import url('base/_reset.css') layer(reset);
-@import url('base/_settings.css') layer(base);
-@import url('layout/_grid.css') layer(layout);
-@import url('components/_c-card.css') layer(components);
-@import url('utilities/_u-spacing.css') layer(utilities);
+@layer reset, base, theme, layout, components, utilities, overrides;
+ 
+ @import url('base/_reset.css') layer(reset);
+ @import url('base/_settings.css') layer(base);
+@import url('base/_theme.css') layer(theme);
+ @import url('layout/_grid.css') layer(layout);
+ @import url('components/_c-card.css') layer(components);
+ @import url('utilities/_u-spacing.css') layer(utilities);
+/* just occasional hotfixes here */
+@import url('overrides/_shame.css') layer(overrides);
 ```
 
 ### Design Tokens
 
 ```css
+/* tokens e media custom */
 :root {
-  /* Colors */
-  --color-primary-100: hsl(220, 80%, 95%);
-  --color-primary-500: hsl(220, 80%, 50%);
-  --color-primary-900: hsl(220, 80%, 10%);
-  
-  /* Typography */
-  --font-family-base: system-ui, -apple-system, sans-serif;
-  --font-size-base: clamp(1rem, 2vw, 1.125rem);
-  --line-height-base: 1.6;
-  
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 2rem;
-  --spacing-xl: 4rem;
-  
-  /* Z-index Scale */
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-overlay: 900;
-  --z-modal: 1000;
-  --z-tooltip: 1100;
-  
-  /* Transitions */
-  --transition-fast: 150ms ease-in-out;
-  --transition-base: 300ms ease-in-out;
-  
-  /* Breakpoints (for JS) */
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-}
+   /* Colors */
+   --color-primary-100: hsl(220, 80%, 95%);
+   --color-primary-500: hsl(220, 80%, 50%);
+   --color-primary-900: hsl(220, 80%, 10%);
+  --color-bg: #fff;
+  --color-fg: #111;
+ 
+   /* Typography */
+   --font-family-base: system-ui, -apple-system, sans-serif;
+   --font-size-base: clamp(1rem, 2vw, 1.125rem);
+   --line-height-base: 1.6;
+ 
+   /* Spacing */
+   --spacing-xs: 0.25rem;
+   --spacing-sm: 0.5rem;
+   --spacing-md: 1rem;
+   --spacing-lg: 2rem;
+   --spacing-xl: 4rem;
+ 
+  /* Radius / Shadow */
+  --radius-sm: .25rem;
+  --radius-md: .5rem;
+  --radius-lg: .75rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / .06);
+  --shadow-md: 0 2px 8px rgb(0 0 0 / .08);
+
+   /* Z-index Scale */
+   --z-dropdown: 100;
+   --z-sticky: 200;
+   --z-overlay: 900;
+   --z-modal: 1000;
+   --z-tooltip: 1100;
+ 
+   /* Transitions */
+   --transition-fast: 150ms ease-in-out;
+   --transition-base: 300ms ease-in-out;
+  --easing-standard: cubic-bezier(.2, .0, .2, 1);
+ 
+   /* Breakpoints (for JS) */
+   --breakpoint-sm: 640px;
+   --breakpoint-md: 768px;
+   --breakpoint-lg: 1024px;
+   --breakpoint-xl: 1280px;
+
+  /* Layout */
+  --container-max: 72rem;
+  --container-pad: clamp(1rem, 3vw, 2rem);
+ }
+
+@custom-media --sm (width >= 640px);
+@custom-media --md (width >= 768px);
+@custom-media --lg (width >= 1024px);
 ```
 
 ### BEM Naming Convention
 
 ```css
-/* Block */
-.c-card { }
-
-/* Element */
-.c-card__header { }
-.c-card__body { }
-.c-card__footer { }
-
-/* Modifier */
-.c-card--featured { }
-.c-card--disabled { }
-
-/* State (via separate class) */
-.c-card.is-active { }
-.c-card.is-loading { }
+/* BEM + States without increasing specificity */
+/* components/_c-card.css */
+@layer components {
+  .c-card { background:var(--color-bg); color:var(--color-fg); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); }
+  .c-card__header{ padding:var(--spacing-md); }
+  .c-card__body{ padding:var(--spacing-md); }
+  .c-card__footer{ padding:var(--spacing-md); }
+  .c-card--featured { box-shadow:var(--shadow-md); }
+  .c-card:where(:hover, :focus-visible) { transform: translateY(-2px); transition: transform var(--transition-base) var(--easing-standard); }
+}
 ```
 
 ### Responsive Design System
 
-##### Mobile-First Grid
+#### Mobile-First Grid
 
 ```css
-.l-grid {
-  display: grid;
-  gap: var(--spacing-md);
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
-}
-
-@media (min-width: 768px) {
-  .l-grid--2-cols { grid-template-columns: repeat(2, 1fr); }
-  .l-grid--3-cols { grid-template-columns: repeat(3, 1fr); }
-  .l-grid--4-cols { grid-template-columns: repeat(4, 1fr); }
-}
-```
-
-#### Container Queries (Modern Approach)
-
-```css
-.c-card-container {
-  container-type: inline-size;
-}
-
-@container (min-width: 400px) {
-  .c-card {
-    grid-template-columns: 150px 1fr;
+/* layout */
+ /* layout/_grid.css */
+@layer layout {
+  .o-container {
+    width: min(100% - 2*var(--container-pad), var(--container-max));
+    margin-inline: auto;
+  }
+  .l-grid { display:grid; gap:var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+  @media (--md) {
+    .l-grid--2-cols { grid-template-columns: repeat(2, 1fr); }
+    .l-grid--3-cols { grid-template-columns: repeat(3, 1fr); }
+    .l-grid--4-cols { grid-template-columns: repeat(4, 1fr); }
   }
 }
 ```
+
+```css
+/* utilities */
+/* utilities/_u-a11y.css */
+@layer utilities {
+  .u-visually-hidden { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .u-focus-ring:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+  .u-no-anim { animation:none !important; transition:none !important; }
+}
+```
+
+```css
+/* theme */
+/* base/_theme.css */
+@layer theme {
+  :root { color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) {
+    :root { --color-bg:#0b0b0b; --color-fg:#eaeaea; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+  }
+}
+```
+
+```css
+/* components/_c-card.css */
+@layer components {
+  .c-card { background:var(--color-bg); color:var(--color-fg); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); }
+  .c-card__header{ padding:var(--spacing-md); }
+  .c-card__body{ padding:var(--spacing-md); }
+  .c-card__footer{ padding:var(--spacing-md); }
+  .c-card--featured { box-shadow:var(--shadow-md); }
+  .c-card:where(:hover, :focus-visible) { transform: translateY(-2px); transition: transform var(--transition-base) var(--easing-standard); }
+}
+```
+
+##### **Notes:**
+
+- The theme layer separates `light/dark mode` and motion preference variations.
+- An `overrides` layer isolates hotfixes and helps prevent specificity wars.
+- Use `@custom-media` queries to standardize breakpoints throughout the CSS.
+- Object classes like `.o-container` and accessibility (a11y) utilities reduce code duplication.
+- `:where()` mantém especificidade baixa para estados e hovers.
 
 ### Performance CSS
 
