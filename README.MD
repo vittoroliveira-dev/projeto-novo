@@ -239,6 +239,7 @@
 ```
 
 ### Semantic HTML Requirements
+[⬆️ Back to top](#)
 
 - Use HTML5 semantic elements: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
 - Implement proper heading hierarchy (h1 → h6)
@@ -253,8 +254,10 @@
 - Unique meta descriptions (50-160 characters)
 
 ## Accessibility (WCAG 2.1 AA Compliance)
+[⬆️ Back to top](#)
 
 ### ARIA Implementation
+[⬆️ Back to top](#)
 
 ```html
 <!-- Navigation State -->
@@ -303,6 +306,7 @@
 ```
 
 ### Keyboard Navigation
+[⬆️ Back to top](#)
 
 - Implement logical tab order
 - Visible focus indicators (minimum 2px outline)
@@ -310,6 +314,7 @@
 - Trap focus in modals
 
 ## Structured Data Implementation
+[⬆️ Back to top](#)
 
 ```html
 <script type="application/ldjson">
@@ -370,8 +375,10 @@
 ---
 
 # SEO and Indexing
+[⬆️ Back to top](#)
 
 ## Required Files
+[⬆️ Back to top](#)
 
 ### robots.txt
 ```txt
@@ -424,10 +431,13 @@ Sitemap: https://example.com/sitemap.xml
 ---
 
 # CSS Architecture
+[⬆️ Back to top](#)
 
 ## ITCSS + BEM Methodology with CSS Layers
+[⬆️ Back to top](#)
 
 ### Layer Structure
+[⬆️ Back to top](#)
 
 ```css
 /* layer and base structure */
@@ -445,6 +455,7 @@ Sitemap: https://example.com/sitemap.xml
 ```
 
 ### Design Tokens
+[⬆️ Back to top](#)
 
 ```css
 /* tokens e media custom */
@@ -504,6 +515,7 @@ Sitemap: https://example.com/sitemap.xml
 ```
 
 ### BEM Naming Convention
+[⬆️ Back to top](#)
 
 ```css
 /* BEM + States without increasing specificity */
@@ -519,8 +531,10 @@ Sitemap: https://example.com/sitemap.xml
 ```
 
 ### Responsive Design System
+[⬆️ Back to top](#)
 
 #### Mobile-First Grid
+[⬆️ Back to top](#)
 
 ```css
 /* layout */
@@ -539,6 +553,8 @@ Sitemap: https://example.com/sitemap.xml
   }
 }
 ```
+
+#### Container Queries
 
 ```css
 /* utilities */
@@ -585,8 +601,10 @@ Sitemap: https://example.com/sitemap.xml
 - `:where()` mantém especificidade baixa para estados e hovers.
 
 ### Performance CSS
+[⬆️ Back to top](#)
 
 #### Critical CSS Strategy
+[⬆️ Back to top](#)
 
 ```css
 /* Critical CSS (trimmed, CLS-safe, motion-safe) */
@@ -608,6 +626,7 @@ img, svg { display:block; max-width:100%; height:auto; }
 ```
 
 #### Font Loading Optimization
+[⬆️ Back to top](#)
 
 ```css
 /* Font loading (variable-friendly, Vite base, subsets) */
@@ -626,6 +645,7 @@ img, svg { display:block; max-width:100%; height:auto; }
 ```
 
 ### Dark Mode Implementation
+[⬆️ Back to top](#)
 
 ```css
  /* Dark mode (apply vars to body, add accent color) */
@@ -662,10 +682,13 @@ body { background-color: var(--color-bg); color: var(--color-text); accent-color
 ---
 
 # JavaScript Guidelines
+[⬆️ Back to top](#)
 
 ## Modern ES6+ Standards
+[⬆️ Back to top](#)
 
 ### Module Structure
+[⬆️ Back to top](#)
 
 ```javascript
 // main.js
@@ -695,6 +718,7 @@ function init() {
 - Consider `font-display: optional` if late font swap hurts layout.
 
 ### Component Class Pattern
+[⬆️ Back to top](#)
 
 ```javascript
 // modules/MenuController.js
@@ -751,8 +775,10 @@ export class MenuController {
 ```
 
 ### Performance Optimization
+[⬆️ Back to top](#)
 
-### Lazy Loading Implementation
+#### Lazy Loading Implementation
+[⬆️ Back to top](#)
 
 ```javascript
 // LazyLoader.js (robust fallback, srcset/picture, wider rootMargin):
@@ -809,6 +835,7 @@ export class MenuController {
 - Markup note (no code change here): for the fallback to work, use data-src, data-srcset, and data-sizes on lazy elements, plus a low-risk placeholder src if needed.
 
 ### Debounce & Throttle Utilities
+[⬆️ Back to top](#)
 
 ```javascript
  // utils.js (preserve context, cancel/flush options):
@@ -852,6 +879,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ```
 
 ### Web Vitals Monitoring
+[⬆️ Back to top](#)
 
 ```javascript
  // modules/PerformanceMonitor.js
@@ -918,10 +946,13 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ---
 
 # Performance Optimization
+[⬆️ Back to top](#)
 
 ## Image Optimization Strategy
+[⬆️ Back to top](#)
 
-#### Responsive Images Implementation
+### Responsive Images Implementation
+[⬆️ Back to top](#)
 
 ```html
 <!-- <picture> (use %BASE_URL%, add JPG 1600w, keep fetchpriority only for LCP) -->
@@ -977,7 +1008,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
   href="%BASE_URL%img/hero-1200w.jpg">
 ```
 
-##### CSS fallback in a single rule (simpler)
+#### CSS fallback in a single rule (simpler)
 
 ```css
    /* CSS background fallback (base path + no-repeat) */
@@ -994,15 +1025,18 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
  }
 ```
 
-### Modern Image Formats Guide
+## Modern Image Formats Guide
+[⬆️ Back to top](#)
 
-#### Overview
+### Overview
+[⬆️ Back to top](#)
 
-###### **Goal**: Ship the smallest files with acceptable quality, correct MIME types, and wide compatibility.
+#### **Goal**: Ship the smallest files with acceptable quality, correct MIME types, and wide compatibility.
 
-###### **Fallback Strategy:** AVIF (optional) → WebP → JPEG/PNG  • SVG for vectors
+#### **Fallback Strategy:** AVIF (optional) → WebP → JPEG/PNG  • SVG for vectors
 
-##### Format Priority
+### Format Priority
+[⬆️ Back to top](#)
 
 | Format | Best For | Browser Support | File Size |
 |--------|----------|-----------------|-----------|
@@ -1012,28 +1046,30 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 | **PNG** | Transparency, crisp edges | Universal | Large |
 | **SVG** | Vector graphics, icons | Universal | Variable |
 
-##### Use Cases
+### Use Cases
+[⬆️ Back to top](#)
 
-##### Photographs
-###### **Primary:** AVIF
-###### **Fallback:** WebP
-###### **Last resort:** JPEG
+#### Photographs
+##### **Primary:** AVIF
+##### **Fallback:** WebP
+##### **Last resort:** JPEG
 
-##### Logos / Icons / Flat illustrations
-###### **Preferred:** SVG (don’t rasterize)
-###### **Alternative:** PNG/WebP only if raster is required at fixed size
+#### Logos / Icons / Flat illustrations
+##### **Preferred:** SVG (don’t rasterize)
+##### **Alternative:** PNG/WebP only if raster is required at fixed size
 
-#####  UI Screenshots / Crisp edges
-###### **Primary:** PNG (lossless, no chroma blur)
-###### **Alternative:** AVIF lossless if encoder tested (watch subsampling)
+####  UI Screenshots / Crisp edges
+##### **Primary:** PNG (lossless, no chroma blur)
+##### **Alternative:** AVIF lossless if encoder tested (watch subsampling)
 
 ##### Animations
 ###### **Short loops:** Animated AVIF/WebP
 ###### **Long/complex:** Video (`.mp4`/`.webm`)
 
-#### Implementation Examples
+### Implementation Examples
+[⬆️ Back to top](#)
 
-##### Responsive Photo with Picture Element
+#### Responsive Photo with Picture Element
 
 ```html
 <!-- Hero/Photo Implementation -->
@@ -1052,7 +1088,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
  </picture>
 ```
 
-##### Optional — Preload the LCP image (match sources)
+#### Optional — Preload the LCP image (match sources)
 
 ```html
 <link rel="preload" as="image"
@@ -1061,7 +1097,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
   href="%BASE_URL%img/hero-1200.jpg">
 ```
 
-##### SVG Icons (Recommended)
+#### SVG Icons (Recommended)
 
 ```html
 <!-- Inline SVG Icon -->
@@ -1070,7 +1106,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 </svg>
 ```
 
-##### CSS Background Images with Fallbacks
+#### CSS Background Images with Fallbacks
 
 ```css
 /* Modern CSS with image-set() */
@@ -1095,17 +1131,17 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 }
 ```
 
-##### Add authoring rules (concise)
+#### Add authoring rules (concise)
 
 - Convert to `sRGB`, strip EXIF.
 - Always set `width`/`height` to avoid CLS.
 - Use `loading="eager"` + `fetchpriority="high"` only for the LCP image.
 - Remove the AVIF `<source>` if you don’t ship AVIF.
 
+### Encoding Commands
+[⬆️ Back to top](#)
 
-#### Encoding Commands
-
-##### AVIF Encoding
+#### AVIF Encoding
 
 ```bash
 ##### Preprocess (convert to sRGB and strip metadata)
@@ -1142,7 +1178,7 @@ cwebp -q 80 -alpha_q 85 -m 6 -mt input.png -o output.webp
 cwebp -near_lossless 60 -z 9 -mt input.png -o output.webp
 ```
 
-##### Batch Processing Example
+#### Batch Processing Example
 
 ```bash
 ##### POSIX: convert all JPEGs to AVIF and WebP (with sRGB preprocessing)
@@ -1163,15 +1199,15 @@ Get-ChildItem -Include *.jpg,*.jpeg -File | ForEach-Object {
 }
 ```
 
-###### **Notes:**
+#### **Notes:**
 - Keep AVIF 4:4:4 for UI and screenshots; 4:2:0 for photos.
 - Always convert to sRGB and strip EXIF to reduce size and color surprises.
 - Skip AVIF if you don’t serve it; keep WebP + JPEG/PNG.
 - Test visually at multiple zoom levels after encoding.
 
-#### Server Configuration
+### Server Configuration
 
-##### Nginx Configuration
+#### Nginx Configuration
 
 ```nginx
 http {
