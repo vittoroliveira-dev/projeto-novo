@@ -829,6 +829,240 @@ class FormEnhancer {
 </picture>
 ```
 
+```css
+## 1.1.1 CSS fallback in a single rule (simpler)
+
+.hero-background {
+  background-image: url("/img/bg.jpg"); /* fallback */
+  background-image: image-set(
+    url("/img/bg.avif") type("image/avif"),
+    url("/img/bg.webp") type("image/webp"),
+    url("/img/bg.jpg") type("image/jpeg")
+  );
+  background-size: cover;
+  background-position: center;
+}
+```
+
+# 1.2 Modern Image Formats Guide
+
+A comprehensive guide for shipping optimized images with the smallest file sizes, acceptable quality, correct MIME types, and wide browser compatibility.
+
+## Overview
+
+**Goal:** Ship the smallest files with acceptable quality, correct MIME types, and wide compatibility.
+
+**Fallback Strategy:** AVIF → WebP → JPEG/PNG (SVG for vectors)
+
+## Format Priority
+
+| Format | Best For | Browser Support | File Size |
+|--------|----------|-----------------|-----------|
+| **AVIF** | Photos, complex images | Modern browsers | Smallest |
+| **WebP** | Universal fallback | Wide support | Small |
+| **JPEG** | Photo compatibility | Universal | Medium |
+| **PNG** | Transparency, crisp edges | Universal | Large |
+| **SVG** | Vector graphics, icons | Universal | Variable |
+
+## Use Cases
+
+### 📸 Photographs
+- **Primary:** AVIF
+- **Fallback:** WebP
+- **Last resort:** JPEG
+
+### 🎨 Logos/Icons/Flat Illustrations
+- **Preferred:** SVG
+- **Alternative:** AVIF/WebP
+
+### 🖥️ UI Screenshots/Crisp Edges
+- **Primary:** AVIF (high quality)
+- **Fallback:** PNG if artifacts appear
+
+### 🎬 Animations
+- **Short loops:** Animated AVIF/WebP
+- **Long/complex:** Video (`.mp4`/`.webm`)
+
+## Implementation Examples
+
+### Responsive Photo with Picture Element
+
+```html
+<!-- Hero/Photo Implementation -->
+<picture>
+  <source type="image/avif"
+          srcset="/img/hero-800.avif 800w, /img/hero-1200.avif 1200w"
+          sizes="(max-width: 1024px) 90vw, 1200px">
+  <source type="image/webp"
+          srcset="/img/hero-800.webp 800w, /img/hero-1200.webp 1200w"
+          sizes="(max-width: 1024px) 90vw, 1200px">
+  <img src="/img/hero-1200.jpg"
+       width="1200" height="600" alt="Hero image description"
+       loading="eager" fetchpriority="high" decoding="async">
+</picture>
+```
+
+### SVG Icons (Recommended)
+
+```html
+<!-- Inline SVG Icon -->
+<svg aria-hidden="true" focusable="false" width="24" height="24">
+  <use href="/icons.svg#check"></use>
+</svg>
+```
+
+### CSS Background Images with Fallbacks
+
+```css
+/* Modern CSS with image-set() */
+.hero-background {
+  background-image: image-set(
+    url("/img/bg.avif") type("image/avif"),
+    url("/img/bg.webp") type("image/webp"),
+    url("/img/bg.jpg") type("image/jpeg")
+  );
+  background-size: cover;
+  background-position: center;
+}
+
+/* Legacy fallback */
+.hero-background {
+  background-image: url("/img/bg.jpg"); /* Fallback */
+  background-image: image-set(
+    url("/img/bg.avif") type("image/avif"),
+    url("/img/bg.webp") type("image/webp"),
+    url("/img/bg.jpg") type("image/jpeg")
+  );
+}
+```
+
+## Encoding Commands
+
+### AVIF Encoding
+```bash
+# General purpose (good starting point)
+avifenc input.jpg -q 32 -s 6 -y 420 -o output.avif
+
+# High quality
+avifenc input.jpg -q 20 -s 8 -y 444 -o output.avif
+
+# Small file size
+avifenc input.jpg -q 40 -s 4 -y 420 -o output.avif
+```
+
+### WebP Encoding
+```bash
+# Photos (lossy compression)
+cwebp -q 80 input.jpg -o output.webp
+
+# Graphics/logos (lossless compression)
+cwebp -lossless -z 9 input.png -o output.webp
+
+# With transparency
+cwebp -q 80 -alpha_q 80 input.png -o output.webp
+```
+
+### Batch Processing Example
+```bash
+# Convert all JPEGs to AVIF and WebP
+for img in *.jpg; do
+  avifenc "$img" -q 32 -s 6 -y 420 -o "${img%.jpg}.avif"
+  cwebp -q 80 "$img" -o "${img%.jpg}.webp"
+done
+```
+
+## Server Configuration
+
+### Nginx Configuration
+```nginx
+http {
+  include /etc/nginx/mime.types;
+  types {
+    image/avif avif;
+    image/webp webp;
+  }
+}
+
+server {
+  location ~* \.(avif|webp)$ {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+}
+```
+
+### Apache Configuration
+```apache
+AddType image/avif .avif
+AddType image/webp .webp
+
+<IfModule mod_expires.c>
+  ExpiresActive on
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE image/svg+xml
+  SetEnvIfNoCase Request_URI "\.(avif|webp)$" no-gzip=1
+</IfModule>
+```
+
+## Best Practices
+
+### ✅ Authoring Rules
+
+- **Export multiple widths** and serve with `<picture>` + `srcset`
+- **Always set `width` and `height`** attributes to prevent Cumulative Layout Shift (CLS)
+- **Include accurate `alt` text** for accessibility
+- **Convert to sRGB** color space for web compatibility
+- **Strip EXIF data** unless specifically required
+- **Use cache-friendly filenames** with hashes for 1-year caching
+- **Set HTML to no-cache** while images cache long-term
+
+### 🎯 Performance Tips
+
+- Use `loading="lazy"` for images below the fold
+- Use `loading="eager"` and `fetchpriority="high"` for above-the-fold images
+- Always include `decoding="async"` for better performance
+- Consider using CSS `aspect-ratio` for responsive containers
+
+### 📱 Responsive Considerations
+
+```html
+<!-- Responsive sizes attribute examples -->
+sizes="100vw"                           <!-- Full width -->
+sizes="(max-width: 768px) 100vw, 50vw"  <!-- Mobile full, desktop half -->
+sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
+```
+
+### 🔍 Testing and Validation
+
+- Test images in multiple browsers
+- Validate MIME types are served correctly
+- Check file sizes with network inspector
+- Verify CLS scores don't increase
+- Test with slow network connections
+
+## Browser Support
+
+| Format | Chrome | Firefox | Safari | Edge |
+|--------|--------|---------|--------|------|
+| AVIF   | 85+    | 93+     | 16.4+  | 85+  |
+| WebP   | 32+    | 65+     | 14+    | 18+  |
+| JPEG   | ✅     | ✅      | ✅     | ✅   |
+| PNG    | ✅     | ✅      | ✅     | ✅   |
+| SVG    | ✅     | ✅      | ✅     | ✅   |
+
+---
+
+## Contributing
+
+Feel free to submit issues and enhancement requests! This guide aims to stay current with modern web standards and browser capabilities.
+
+## License
+
+This guide is released under the MIT License. Feel free to use and modify as needed.
 ### 2. Resource Hints & Preloading
 
 ```html
