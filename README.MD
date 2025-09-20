@@ -24,7 +24,7 @@
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#1-itcss--bem-methodology-with-css-layers)
-    - [Layer Structure](#layer-structure)
+    - [Layer Structure](#1-itcss--bem-methodology-with-css-layers)
     - [Design Tokens](#12-design-tokens)
     - [BEM Naming Convention](#13-bem-naming-convention)
   - [Responsive Design System](#2-responsive-design-system)
