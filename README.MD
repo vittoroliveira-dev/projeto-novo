@@ -2,16 +2,103 @@
 
 ## 📋 Table of Contents
 
+# 🚀 Static Site Development Guidelines
+
+## 📋 Table of Contents
+
 - [Project Structure](#project-structure)
+  - [Folder Organization](#folder-organization)
+  - [File Naming Conventions](#file-naming-conventions)
+
 - [HTML Standards](#html-standards)
+  - [Document Structure Requirements](#document-structure-requirements)
+    - [Base Template Specification](#base-template-specification)
+    - [Semantic HTML Requirements](#semantic-html-requirements)
+  - [Accessibility (WCAG 2.1 AA Compliance)](#accessibility-wcag-21-aa-compliance)
+    - [ARIA Implementation](#aria-implementation)
+    - [Keyboard Navigation](#keyboard-navigation)
+  - [Structured Data Implementation](#structured-data-implementation)
+
 - [SEO and Indexing](#seo-and-indexing)
+  - [Meta Tags Configuration](#meta-tags-configuration)
+  - [Required Files](#required-files)
+    - [robots.txt](#robotstxt)
+    - [sitemap.xml](#sitemapxml)
+    - [404.html](#404html)
+  - [Server Configuration](#server-configuration)
+
 - [CSS Architecture](#css-architecture)
+  - [ITCSS + BEM Methodology](#itcss--bem-methodology)
+    - [Layer Structure](#layer-structure)
+    - [Design Tokens](#design-tokens)
+    - [BEM Naming Convention](#bem-naming-convention)
+  - [Responsive Design System](#responsive-design-system)
+    - [Mobile-First Grid](#mobile-first-grid)
+    - [Container Queries](#container-queries)
+  - [Performance CSS](#performance-css)
+    - [Critical CSS Strategy](#critical-css-strategy)
+    - [Font Loading Optimization](#font-loading-optimization)
+  - [Dark Mode Implementation](#dark-mode-implementation)
+
 - [JavaScript Guidelines](#javascript-guidelines)
+  - [Modern ES6+ Standards](#modern-es6-standards)
+    - [Module Structure](#module-structure)
+    - [Component Class Pattern](#component-class-pattern)
+  - [Performance Optimization](#performance-optimization-js)
+    - [Lazy Loading Implementation](#lazy-loading-implementation)
+    - [Debounce & Throttle Utilities](#debounce--throttle-utilities)
+  - [Web Vitals Monitoring](#web-vitals-monitoring)
+  - [Progressive Enhancement](#progressive-enhancement)
+
 - [Performance Optimization](#performance-optimization)
+  - [Image Optimization Strategy](#image-optimization-strategy)
+    - [Responsive Images Implementation](#responsive-images-implementation)
+    - [Modern Image Formats](#modern-image-formats)
+  - [Resource Hints & Preloading](#resource-hints--preloading)
+  - [Service Worker Implementation](#service-worker-implementation)
+  - [Speculation Rules API](#speculation-rules-api)
+  - [Build Configuration](#build-configuration)
+    - [Vite Configuration](#vite-configuration)
+    - [PostCSS Configuration](#postcss-configuration)
+
 - [Security Implementation](#security-implementation)
+  - [Content Security Policy](#content-security-policy)
+    - [CSP Configuration](#csp-configuration)
+    - [Nonce Implementation](#nonce-implementation)
+  - [Security Headers](#security-headers)
+    - [Apache Configuration](#apache-configuration)
+    - [Nginx Configuration](#nginx-configuration)
+  - [TLS/SSL Configuration](#tlsssl-configuration)
+    - [SSL Setup](#ssl-setup)
+    - [Certificate Management](#certificate-management)
+  - [Subresource Integrity](#subresource-integrity)
+  - [Input Sanitization](#input-sanitization)
+
 - [Quality Assurance](#quality-assurance)
+  - [Testing Configuration](#testing-configuration)
+    - [Jest Unit Testing](#jest-unit-testing)
+    - [Playwright E2E Testing](#playwright-e2e-testing)
+  - [Performance Budget](#performance-budget)
+  - [Real User Monitoring](#real-user-monitoring)
+  - [Analytics Implementation](#analytics-implementation)
+    - [Google Analytics 4](#google-analytics-4)
+    - [Privacy-Focused Alternatives](#privacy-focused-alternatives)
+
 - [Additional Resources](#additional-resources)
+  - [Validation Tools](#validation-tools)
+  - [Performance Testing](#performance-testing)
+  - [Security Auditing](#security-auditing)
+  - [Documentation](#documentation)
+
 - [Production Checklist](#production-checklist)
+  - [HTML & SEO](#html--seo)
+  - [CSS & Performance](#css--performance)
+  - [JavaScript & Functionality](#javascript--functionality)
+  - [Accessibility & UX](#accessibility--ux)
+  - [Security](#security)
+  - [Performance](#performance)
+  - [Testing & Monitoring](#testing--monitoring)
+  - [Deployment](#deployment)
 
 ---
 
@@ -230,7 +317,6 @@ project/
 ```txt
 User-agent: *
 Disallow:
-
 Sitemap: https://example.com/sitemap.xml
 ```
 
