@@ -108,8 +108,8 @@
 
 # Project Structure
 
-```bash
-project/
+```diff
+ project/
 ├── src/
 │   ├── index.html
 │   ├── pages/
@@ -132,11 +132,30 @@ project/
 │       ├── fonts/
 │       ├── images/
 │       └── icons/
-├── dist/
+├── dist/                      # or "docs/" (choose ONE output)
+├── public/                    # files served at the site root
+│   ├── favicon.svg
+│   ├── apple-touch-icon.png
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   ├── 404.html
+│   └── icons.svg              # optional SVG sprite
 ├── .nvmrc
 ├── package.json
+├── vite.config.js
+├── postcss.config.js
+├── .editorconfig
+├── eslint.config.js
+├── .stylelintrc.cjs
+├── .browserslistrc
+├── lighthouserc.json          # or budget.json
+├── .nojekyll                  # se publicar via GitHub Pages
+├── .github/
+│   └── workflows/
+│       ├── ci.yml             # lint + build + LHCI
+│       └── deploy.yml         # SFTP/rsync, if applicable
+├── AGENTS.md 
 └── README.md
-```
 
 ---
 
@@ -218,9 +237,15 @@ project/
 
 - Use HTML5 semantic elements: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
 - Implement proper heading hierarchy (h1 → h6)
-- Single `<h1>` per page
+- Single `<h1>` per page.
+- Use a list (ul > li > a) for navigation.
+- aria-current="page" only on the active page link.
+- required replaces aria-required.
+- inert prevents focus when the menu is hidden; remove it via JS on open.
+- Use aria-live or role="alert", not both; stick with aria-live="polite".
+- Set aria-invalid="true" only upon an actual error.
 - Unique `<title>` per page (50-60 characters)
-- Unique meta descriptions (150-160 characters)
+- Unique meta descriptions (50-160 characters)
 
 ## Accessibility (WCAG 2.1 AA Compliance)
 
@@ -228,11 +253,17 @@ project/
 
 ```html
 <!-- Navigation State -->
-<nav aria-label="Primary">
-  <a href="/" aria-current="page">Home</a>
-  <a href="/about">About</a>
+<nav aria-label="Navigation State">
+  <button type="button" aria-expanded="false" aria-controls="primary-menu" class="c-nav__toggle"
+    data-menu-trigger>Menu</button>
+  <ul id="primary-menu" class="c-nav__list" hidden data-menu inert>
+    <li><a href="/" aria-current="page">Início</a></li>
+    <li><a href="/about">Sobre</a></li>
+  </ul>
 </nav>
+```
 
+```html
 <!-- Expandable Elements -->
 <button aria-expanded="false" aria-controls="menu-items">
   Menu
@@ -240,25 +271,30 @@ project/
 <ul id="menu-items" hidden>
   <!-- Menu items -->
 </ul>
+```
 
+```html
 <!-- Form Accessibility -->
-<form>
+ <form>
   <label for="email">Email Address</label>
-  <input 
-    type="email" 
-    id="email" 
-    name="email"
+   <input 
+     type="email" 
+     id="email" 
+     name="email"
+    required
     autocomplete="email"
-    aria-required="true"
     aria-invalid="false"
     aria-describedby="email-error">
-  <span id="email-error" role="alert" aria-live="polite"></span>
-</form>
+  <span id="email-error" aria-live="polite" class="u-visually-hidden"></span>
+ </form>
+```
 
-<!-- Decorative Icons -->
-<svg aria-hidden="true" focusable="false">
-  <!-- Icon content -->
-</svg>
+```html
+ <!-- Decorative Icons -->
+-<svg aria-hidden="true" focusable="false">
++<svg aria-hidden="true" focusable="false" width="24" height="24">
+   <!-- Icon content -->
+ </svg>
 ```
 
 ### Keyboard Navigation
@@ -271,44 +307,52 @@ project/
 ## Structured Data Implementation
 
 ```html
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
+<script type="application/ldjson">
+ {
+   "@context": "https://schema.org",
+   "@type": "Organization",
+  "@id": "https://domain.com/#organization",
   "name": "Company Name",
-  "url": "https://domain.com",
-  "logo": "https://domain.com/logo.png",
+  "url": "https://domain.com/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://domain.com/logo.png",
+    "width": 512,
+    "height": 512
+  },
   "sameAs": [
-    "https://facebook.com/company",
-    "https://twitter.com/company"
-  ],
-  "contactPoint": {
+     "https://facebook.com/company",
+     "https://twitter.com/company"
+   ],
+  "contactPoint": [{
     "@type": "ContactPoint",
-    "telephone": "+55-11-99999-9999",
+    "telephone": "5511999999999",
     "contactType": "customer service",
-    "availableLanguage": "Portuguese"
-  }
-}
-</script>
-
-<!-- BreadcrumbList for hierarchical pages -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [{
-    "@type": "ListItem",
-    "position": 1,
-    "name": "Home",
-    "item": "https://domain.com"
-  },{
-    "@type": "ListItem",
-    "position": 2,
-    "name": "Category",
-    "item": "https://domain.com/category"
+    "availableLanguage": ["pt-BR"]
   }]
-}
-</script>
+ }
+ </script>
+```
+
+```html
+<!-- BreadcrumbList for hierarchical pages -->
+<script type="application/ldjson">
+ {
+   "@context": "https://schema.org",
+   "@type": "BreadcrumbList",
+   "itemListElement": [{
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+    "item": "https://domain.com/"
+  },{
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Category",
+    "item": "https://domain.com/category/"
+ }]
+ }
+ </script>
 ```
 
 ---
