@@ -920,7 +920,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 #### Responsive Images Implementation
 
 ```html
-<-- <picture> (use %BASE_URL%, add JPG 1600w, keep fetchpriority only for LCP) -->
+<!-- <picture> (use %BASE_URL%, add JPG 1600w, keep fetchpriority only for LCP) -->
  <picture>
   <!-- AVIF (optional; remove if you don't ship it) -->
    <source 
@@ -966,7 +966,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ```
 
 ```html
-<-- Preload LCP image in <head> (matches sources) -->
+<!-- Preload LCP image in <head> (matches sources) -->
 <link rel="preload" as="image"
   imagesrcset="%BASE_URL%img/hero-800w.webp 800w, %BASE_URL%img/hero-1200w.webp 1200w, %BASE_URL%img/hero-1600w.webp 1600w"
   imagesizes="(max-width: 1024px) 80vw, 1200px"
@@ -996,7 +996,7 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 
 ###### **Goal**: Ship the smallest files with acceptable quality, correct MIME types, and wide compatibility.
 
-###### **Fallback Strategy:** AVIF → WebP → JPEG/PNG (SVG for vectors)
+###### **Fallback Strategy:** AVIF (optional) → WebP → JPEG/PNG  • SVG for vectors
 
 ##### Format Priority
 
@@ -1015,13 +1015,13 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ###### **Fallback:** WebP
 ###### **Last resort:** JPEG
 
-##### Logos/Icons/Flat Illustrations
-###### **Preferred:** SVG
-###### **Alternative:** AVIF/WebP
+##### Logos / Icons / Flat illustrations
+###### **Preferred:** SVG (don’t rasterize)
+###### **Alternative:** PNG/WebP only if raster is required at fixed size
 
-##### 🖥UI Screenshots/Crisp Edges
-###### **Primary:** AVIF (high quality)
-###### **Fallback:** PNG if artifacts appear
+#####  UI Screenshots / Crisp edges
+###### **Primary:** PNG (lossless, no chroma blur)
+###### **Alternative:** AVIF lossless if encoder tested (watch subsampling)
 
 ##### Animations
 ###### **Short loops:** Animated AVIF/WebP
@@ -1033,17 +1033,28 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 
 ```html
 <!-- Hero/Photo Implementation -->
-<picture>
+<!-- Implementation example (Vite base, add 1600w, keep fetchpriority only for LCP) -->
+ <picture>
   <source type="image/avif"
-          srcset="/img/hero-800.avif 800w, /img/hero-1200.avif 1200w"
-          sizes="(max-width: 1024px) 90vw, 1200px">
+          srcset="%BASE_URL%img/hero-800.avif 800w, %BASE_URL%img/hero-1200.avif 1200w, %BASE_URL%img/hero-1600.avif 1600w"
+           sizes="(max-width: 1024px) 90vw, 1200px">
   <source type="image/webp"
-          srcset="/img/hero-800.webp 800w, /img/hero-1200.webp 1200w"
-          sizes="(max-width: 1024px) 90vw, 1200px">
-  <img src="/img/hero-1200.jpg"
-       width="1200" height="600" alt="Hero image description"
+          srcset="%BASE_URL%img/hero-800.webp 800w, %BASE_URL%img/hero-1200.webp 1200w, %BASE_URL%img/hero-1600.webp 1600w"
+           sizes="(max-width: 1024px) 90vw, 1200px">
+  <img src="%BASE_URL%img/hero-1200.jpg"
+       srcset="%BASE_URL%img/hero-800.jpg 800w, %BASE_URL%img/hero-1200.jpg 1200w, %BASE_URL%img/hero-1600.jpg 1600w"
+        width="1200" height="600" alt="Hero image description"
        loading="eager" fetchpriority="high" decoding="async">
-</picture>
+ </picture>
+```
+
+##### Optional — Preload the LCP image (match sources)
+
+```html
+<link rel="preload" as="image"
+  imagesrcset="%BASE_URL%img/hero-1200.webp 1200w, %BASE_URL%img/hero-1600.webp 1600w"
+  imagesizes="(max-width: 1024px) 90vw, 1200px"
+  href="%BASE_URL%img/hero-1200.jpg">
 ```
 
 ##### SVG Icons (Recommended)
@@ -1080,43 +1091,79 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 }
 ```
 
+##### Add authoring rules (concise)
+
+- Convert to `sRGB`, strip EXIF.
+- Always set `width`/`height` to avoid CLS.
+- Use `loading="eager"` + `fetchpriority="high"` only for the LCP image.
+- Remove the AVIF `<source>` if you don’t ship AVIF.
+
+
 #### Encoding Commands
 
 ##### AVIF Encoding
 
 ```bash
-##### General purpose (good starting point)
-avifenc input.jpg -q 32 -s 6 -y 420 -o output.avif
+##### Preprocess (convert to sRGB and strip metadata)
+magick input.jpg -colorspace sRGB -strip input-srgb.jpg
 
+##### General purpose (photos)
+avifenc -q 32 -s 6 -y 420 --jobs all input-srgb.jpg -o output.avif
+ 
 ##### High quality
-avifenc input.jpg -q 20 -s 8 -y 444 -o output.avif
-
+avifenc -q 24 -s 4 -y 420 --jobs all input-srgb.jpg -o output.avif
+ 
 ##### Small file size
-avifenc input.jpg -q 40 -s 4 -y 420 -o output.avif
+avifenc -q 40 -s 8 -y 420 --jobs all input-srgb.jpg -o output.avif
+
+##### UI / crisp edges (avoid chroma blur)
+avifenc -q 28 -s 6 -y 444 --jobs all input-srgb.png -o output.avif
+
+##### Lossless (use sparingly; large files)
+avifenc --lossless -s 4 --jobs all input-srgb.png -o output.avif
 ```
 
-##### WebP Encoding
-
 ```bash
-##### Photos (lossy compression)
-cwebp -q 80 input.jpg -o output.webp
-
+##### WebP Encoding
+##### Photos (lossy)
+cwebp -q 77 -m 6 -sharp_yuv -mt input.jpg -o output.webp
+ 
 ##### Graphics/logos (lossless compression)
-cwebp -lossless -z 9 input.png -o output.webp
-
+cwebp -lossless -z 9 -mt input.png -o output.webp
+ 
 ##### With transparency
-cwebp -q 80 -alpha_q 80 input.png -o output.webp
+cwebp -q 80 -alpha_q 85 -m 6 -mt input.png -o output.webp
+
+##### Near-lossless for UI (good balance)
+cwebp -near_lossless 60 -z 9 -mt input.png -o output.webp
 ```
 
 ##### Batch Processing Example
 
 ```bash
-##### Convert all JPEGs to AVIF and WebP
-for img in *.jpg; do
-  avifenc "$img" -q 32 -s 6 -y 420 -o "${img%.jpg}.avif"
-  cwebp -q 80 "$img" -o "${img%.jpg}.webp"
+##### POSIX: convert all JPEGs to AVIF and WebP (with sRGB preprocessing)
+shopt -s nullglob
+for img in *.jpg *.jpeg; do
+  magick "$img" -colorspace sRGB -strip "tmp-$img"
+  avifenc -q 32 -s 6 -y 420 --jobs all "tmp-$img" -o "${img%.*}.avif"
+  cwebp -q 77 -m 6 -sharp_yuv -mt "tmp-$img" -o "${img%.*}.webp"
+  rm -f "tmp-$img"
 done
+
+##### Windows PowerShell: JPEG → AVIF/WebP
+Get-ChildItem -Include *.jpg,*.jpeg -File | ForEach-Object {
+  magick $_.FullName -colorspace sRGB -strip "$($_.DirectoryName)\tmp-$($_.Name)"
+  avifenc -q 32 -s 6 -y 420 --jobs all "$($_.DirectoryName)\tmp-$($_.Name)" -o "$($_.DirectoryName)\$($_.BaseName).avif"
+  cwebp -q 77 -m 6 -sharp_yuv -mt "$($_.DirectoryName)\tmp-$($_.Name)" -o "$($_.DirectoryName)\$($_.BaseName).webp"
+  Remove-Item "$($_.DirectoryName)\tmp-$($_.Name)"
+}
 ```
+
+###### **Notes:**
+- Keep AVIF 4:4:4 for UI and screenshots; 4:2:0 for photos.
+- Always convert to sRGB and strip EXIF to reduce size and color surprises.
+- Skip AVIF if you don’t serve it; keep WebP + JPEG/PNG.
+- Test visually at multiple zoom levels after encoding.
 
 #### Server Configuration
 
