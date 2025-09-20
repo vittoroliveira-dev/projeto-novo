@@ -774,8 +774,167 @@ export class MenuController {
 }
 ```
 
-### Performance Optimization
+### Performance Optimization (JS)
 [⬆️ Back to top](#)
+
+#### Ship less JS
+- Budget: ≤150 KB gzipped total, ≤75 KB on first load.
+- No polyfills by default. Load only-needed polyfills conditionally.
+
+```html
+<!-- Only if feature missing -->
+<script type="module">
+  if (!('IntersectionObserver' in window)) {
+    import('%BASE_URL%polyfills/intersection-observer.min.js');
+  }
+</script>
+```
+
+#### Code-split and lazy import
+- Split non-critical modules. Load on visibility or intent.
+
+```javascript
+// modules/boostrap-lazy.js
+const onIntersect = (el, cb, rootMargin='200px') => {
+  const io = new IntersectionObserver(e=>{
+    if (e[0].isIntersecting){ io.disconnect(); cb(); }
+  },{rootMargin});
+  io.observe(el);
+};
+
+// Example: heavy carousel only when visible
+const spot = document.querySelector('[data-carousel]');
+if (spot) onIntersect(spot, async () => {
+  const { Carousel } = await import('./Carousel.js');
+  new Carousel(spot);
+});
+```
+
+```javascript
+#### Vite dynamic imports (glob)
+- Map page-specific initializers to chunks.
+
+// main.js
+const inits = import.meta.glob('./pages/**/init-*.js'); // lazy chunks
+document.querySelectorAll('[data-init]').forEach(async el => {
+  const mod = inits[`./pages/${el.dataset.init}.js`];
+  if (mod) (await mod()).default(el);
+});
+```
+
+#### Preload what you will need next
+- Use `modulepreload` for the next likely chunk.
+
+```html
+<link rel="modulepreload" href="%BASE_URL%scripts/pages/init-contact.js">
+```
+
+#### Keep handlers responsive (INP)
+- Use passive listeners, delegate, and yield on long work.
+
+```javascript
+// Passive + delegated
+document.addEventListener('touchstart', onTap, { passive: true });
+document.body.addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  handle(btn.dataset.action);
+});
+
+// Yield to input
+export async function yieldToInput() {
+  // scheduler.isInputPending() guard (if available)
+  const s = navigator.scheduling?.isInputPending?.bind(navigator.scheduling);
+  if (s && s({ includeContinuous: true })) await Promise.resolve();
+  // rIC fallback
+  await new Promise(res => {
+    (window.requestIdleCallback || setTimeout)(res, 1);
+  });
+}
+```
+
+```javascript
+#### Avoid layout thrash
+- Read, then write. Batch via `requestAnimationFrame`.
+
+// measure → mutate
+function setHeights(nodes){
+  const heights = Array.from(nodes, n => n.offsetHeight); // read batch
+  requestAnimationFrame(() => {                           // write batch
+    nodes.forEach((n,i)=> n.style.blockSize = heights[i] + 'px');
+  });
+}
+```
+
+#### Break up long tasks
+- Chunk work into micro-batches under ~50 ms.
+
+```javascript
+export async function chunked(list, fn, chunk=50){
+  let i=0; const t = performance.now;
+  while (i<list.length){
+    const start = t();
+    for (let c=0; c<chunk && i<list.length; c++, i++) fn(list[i]);
+    if (t() - start > 45) await yieldToInput(); // from step 5
+  }
+}
+```
+
+#### Network and fetch priority
+- Hint browser priorities and cancel on navigation.
+
+```javascript
+// Priority hint where supported
+fetch(url, { priority: 'low' }).catch(()=>{});
+
+// Abort stale requests
+const ctl = new AbortController();
+addEventListener('pagehide', () => ctl.abort(), { once:true });
+fetch('/api/list', { signal: ctl.signal });
+```
+
+#### Off-main-thread for heavy work
+- Use a Worker for parsing, image ops, or large JSON.
+
+```javascript
+// worker.js
+self.onmessage = (e)=> { const out = heavyCompute(e.data); postMessage(out); };
+
+// main
+const w = new Worker(new URL('./worker.js', import.meta.url), { type:'module' });
+w.postMessage(data);
+w.onmessage = ({data}) => render(data);
+```
+
+#### Build-time optimizations (Vite)
+- Tree-shake, define env, split vendor, drop debug.
+
+```javascript
+// vite.config.js (excerpt)
+export default {
+  build: {
+    minify: 'terser',
+    terserOptions: { compress: { drop_console:true, drop_debugger:true } },
+    rollupOptions: {
+      output: { manualChunks: { vendor: ['lodash-es','dayjs'] } }
+    },
+    target: 'es2020', // modern output → smaller
+  },
+  define: { __DEV__: false }
+};
+```
+
+### Event utilities (debounce/throttle)
+- Use your improved helpers for scroll/resize/input.
+
+```javascript
+import { debounce, throttle } from './modules/utils.js';
+addEventListener('resize', debounce(() => recalc(), 200));
+addEventListener('scroll', throttle(() => track(), 150, { trailing:true }));
+```
+#### Guard CSS/JS interaction
+- Prefer CSS for hover/focus states.
+- Avoid JS-driven layout where `aspect-ratio`, `:has()`, or `contain` solves it
 
 #### Lazy Loading Implementation
 [⬆️ Back to top](#)
