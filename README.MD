@@ -52,10 +52,10 @@ project/
 
 #### 1.1 Base Template Specification
 
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+    ```html
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
     <!-- Required Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -121,9 +121,7 @@ project/
     </html>
     ```
 
------
-
-### 1.2 Semantic HTML Requirements
+#### 1.2 Semantic HTML Requirements
 
 - Use HTML5 semantic elements: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
 - Implement proper heading hierarchy (h1 → h6)
