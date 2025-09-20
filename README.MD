@@ -825,48 +825,6 @@ export function throttle(fn, limit = 200, { leading = true, trailing = true } = 
 ### Web Vitals Monitoring
 
 ```javascript
-// modules/PerformanceMonitor.js
-export class PerformanceMonitor {
-  constructor() {
-    this.initWebVitals();
-    this.trackErrors();
-  }
-
-  async initWebVitals() {
-    const { onLCP, onINP, onCLS, onFCP, onTTFB } = await import(
-      'https://cdn.jsdelivr.net/npm/web-vitals@3/dist/web-vitals.iife.js'
-    );
-    
-    const send = (metric) => {
-      // For static sites: integrate with analytics provider or remove
-      console.log('[web-vitals]', metric);
-    };
-    
-    onLCP(send);
-    onINP(send);
-    onCLS(send);
-    onFCP(send);
-    onTTFB(send);
-  }
-
-  trackErrors() {
-    window.addEventListener('error', (e) => {
-      const payload = {
-        msg: e.message,
-        src: e.filename,
-        line: e.lineno,
-        col: e.colno
-      };
-      console.warn('[error]', payload);
-    });
-  }
-}
-```
-
-### Progressive Enhancement
-
-```javascript
- // PerformanceMonitor.js (self-hosted ESM, GA4/beacon, extra error hook):
  // modules/PerformanceMonitor.js
  export class PerformanceMonitor {
    constructor() {
@@ -875,6 +833,7 @@ export class PerformanceMonitor {
    }
  
    async initWebVitals() {
+    // PerformanceMonitor.js (self-hosted ESM, GA4/beacon, extra error hook):
     // Prefer bundling via Vite: `npm i web-vitals`
     const { onLCP, onINP, onCLS, onFCP, onTTFB } = await import('web-vitals/attribution');
     const send = (metric) => {
