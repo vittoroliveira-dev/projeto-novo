@@ -104,7 +104,7 @@
   - [Testing]()
   - [Documentation]()
 
----
+***
 
 # Project Structure
 
@@ -157,7 +157,7 @@
 ├── AGENTS.md 
 └── README.md
 
----
+***
 
 # HTML Standards
 
