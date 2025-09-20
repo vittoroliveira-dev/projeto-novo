@@ -85,7 +85,6 @@
     - [Input sanitization section (expand with URL and HTML guards)](#input-sanitization-section-expand-with-url-and-html-guards)
     - [DOMPurify usage (self-host ESM + CSP-friendly)](#dompurify-usage-self-host-esm--csp-friendly)
 
-  - [Real User Monitoring](#real-user-monitoring-rum)
   - [Analytics Implementation]()
     - [Google Analytics 4](#google-analytics-4-csp-compatible)
     - [Privacy-Focused Alternatives]()
