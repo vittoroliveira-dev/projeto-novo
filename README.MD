@@ -17,7 +17,7 @@
 - [SEO and Indexing](#seo-and-indexing)
   - [Required Files](#required-files)
     - [robots.txt](#robotstxt)
-      - [Page-level robots for utility pages](#)
+      - [Page-level robots for utility pages](#page-level-robots-for-utility-pages)
     - [sitemap.xml](#sitemapxml)
     - [404.html](#404html)
   - [Web App Manifest + link](#website-json-ld-sitelinks-search-box) 
@@ -81,8 +81,6 @@
   - [Service Worker Implementation](#service-worker-implementation)
 
 - [Security Implementation](#security-implementation)
-    - [Security headers beyond CSP](#)
-    - [Subresource Integrity](#)
   - [Performance Monitoring](#performance-monitoring)
   - [Google TAG Manager - (GA4, CSP-safe, consent mode, SPA-ready)](#dompurify-usage-self-host-esm--csp-friendly)
   - [Content Security Policy](#content-security-policy)
