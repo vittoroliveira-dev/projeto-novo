@@ -102,9 +102,9 @@
   - [Monitoring & Analytics]()
   - [Infrastructure]()
   - [Testing]()
-  - [Documentation]()
+  - [Documentation]().
 
-***
+---
 
 # Project Structure
 
@@ -156,8 +156,9 @@
 │       └── deploy.yml         # SFTP/rsync, if applicable
 ├── AGENTS.md 
 └── README.md
+```
 
-***
+---
 
 # HTML Standards
 
