@@ -46,7 +46,7 @@
 - [Performance Optimization](#performance-optimization)
   - [Image Optimization Strategy](#1-image-optimization-strategy)
     - [Responsive Images Implementation](#1-image-optimization-strategy)
-    - [Modern Image Formats]()
+    - [Modern Image Formats](#12-modern-image-formats-guide)
       - [Overview](#overview)
       - [Format Priority](#format-priority)
       - [Use Cases](#use-cases)
