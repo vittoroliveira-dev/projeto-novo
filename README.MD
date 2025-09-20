@@ -90,28 +90,30 @@
     - [Privacy-Focused Alternatives]()
 
 - [Quality Assurance](#quality-assurance)
-  - [Testing Configuration](#1-testing-configuration)
-    - [Jest Unit Testing](#11-jest-unit-testing)
-    - [Playwright E2E Testing](#12-playwright-e2e-testing)
-  - [Performance Budget](#2-performance-budget)
+  - [Testing Configuration](#testing-configuration)
+    - [Jest Unit Testing](#jest-unit-testing)
+      - [Example Test](#example-test)
+      - [Example E2E Test](#example-e2e-test)
+  - [Performance Budget](#performance-budget)
 
-- [Additional Resources](#-additional-resources)
+- [Additional Resources](#additional-resources)
   - [Validation Tools](#validation-tools)
   - [Performance Testing](#performance-testing)
   - [Security Auditing](#security-auditing)
   - [Documentation](#documentation)
 
 - [Production Checklist](#-production-checklist)
-  - [Code Quality]()
-  - [Performance](#css--performance)
+  - [Code Quality](#code-quality)
+  - [Performance](#performance)
   - [JavaScript & Functionality]()
-  - [Accessibility]()
+  - [Accessibility](#accessibility)
   - [Security](#security)
-  - [Progressive Web App]()
-  - [Monitoring & Analytics]()
-  - [Infrastructure]()
-  - [Testing]()
-  - [Documentation]().
+  - [SEO & Metadata](#seo--metadata)
+  - [Progressive Web App](#progressive-web-app)
+  - [Monitoring & Analytics](#monitoring--analytics)
+  - [Infrastructure](#infrastructure)
+  - [Testing](#testing)
+  - [Documentation](#documentation-1)
 
 ---
 
