@@ -63,6 +63,8 @@
       - [Use Cases](#use-cases)
       - [Implementation Examples](#implementation-examples)
       - [Encoding Commands](#encoding-commands)
+        - [AVIF Encoding](#avif-encoding)
+        - [AVIF Encoding](#avif-encoding)
       - [Server Configuration](#server-configuration)
       - [Best Practices](#best-practices)
   - [Resource Hints & Preloading](#2-resource-hints--preloading)
@@ -1339,9 +1341,9 @@ avifenc -q 28 -s 6 -y 444 --jobs all input-srgb.png -o output.avif
 avifenc --lossless -s 4 --jobs all input-srgb.png -o output.avif
 ```
 
-```bash
 ##### WebP Encoding
 ##### Photos (lossy)
+```bash
 cwebp -q 77 -m 6 -sharp_yuv -mt input.jpg -o output.webp
  
 ##### Graphics/logos (lossless compression)
