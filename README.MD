@@ -9,7 +9,7 @@
 - [HTML Standards](#html-standards)
   - [Document Structure Requirements](#document-structure-requirements)
     - [Base Template Specification](#base-template-specification)
-    - [Semantic HTML Requirements](#semantic-html-requirements)
+    - [Semantic HTML Requirements](#12-semantic-html-requirements)
   - [Accessibility (WCAG 2.1 AA Compliance)](#accessibility-wcag-21-aa-compliance)
     - [ARIA Implementation](#aria-implementation)
     - [Keyboard Navigation](#keyboard-navigation)
