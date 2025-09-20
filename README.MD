@@ -3,8 +3,6 @@
 ## 📋 Table of Contents
 
 - [Project Structure](#project-structure)
-  - [Folder Organization](#folder-organization)
-  - [File Naming Conventions](#file-naming-conventions)
 
 - [HTML Standards](#html-standards)
   - [Document Structure Requirements](#document-structure-requirements)
