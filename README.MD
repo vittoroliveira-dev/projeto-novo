@@ -56,9 +56,9 @@
       - [Best Practices](#best-practices)
   - [Resource Hints & Preloading](#2-resource-hints--preloading)
   - [Service Worker Implementation](#service-worker-implementation)
-  - [Speculation Rules API](#speculation-rules-api)
-  - [Build Configuration](#5-build-configuration)
-    - [Vite Configuration](#51-vite-configuration)
+  - [Speculation Rules API](#5-speculation-rules-api)
+  - [Build Configuration](#6-build-configuration)
+    - [Vite Configuration](61-vite-configuration)
     - [PostCSS Configuration](#postcss-configuration)
 
 - [Security Implementation]()
@@ -104,7 +104,7 @@
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```bash
 project/
@@ -138,11 +138,11 @@ project/
 
 ---
 
-## HTML Standards
+# HTML Standards
 
-### 1. Document Structure Requirements
+## Document Structure Requirements
 
-#### 1.1 Base Template Specification
+### Base Template Specification
 
 ```html
 <!DOCTYPE html>
@@ -212,7 +212,7 @@ project/
 </html>
 ```
 
-#### 1.2 Semantic HTML Requirements
+### Semantic HTML Requirements
 
 - Use HTML5 semantic elements: `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
 - Implement proper heading hierarchy (h1 → h6)
@@ -220,9 +220,9 @@ project/
 - Unique `<title>` per page (50-60 characters)
 - Unique meta descriptions (150-160 characters)
 
-### 2. Accessibility (WCAG 2.1 AA Compliance)
+## Accessibility (WCAG 2.1 AA Compliance)
 
-#### 2.1 ARIA Implementation
+### ARIA Implementation
 
 ```html
 <!-- Navigation State -->
@@ -259,14 +259,14 @@ project/
 </svg>
 ```
 
-#### 2.2 Keyboard Navigation
+### Keyboard Navigation
 
 - Implement logical tab order
 - Visible focus indicators (minimum 2px outline)
 - Skip links for keyboard navigation
 - Trap focus in modals
 
-### 3. Structured Data Implementation
+## Structured Data Implementation
 
 ```html
 <script type="application/ld+json">
@@ -311,18 +311,18 @@ project/
 
 ---
 
-## SEO and Indexing
+# SEO and Indexing
 
-### Required Files
+## Required Files
 
-#### robots.txt
+### robots.txt
 ```txt
 User-agent: *
 Disallow:
 Sitemap: https://example.com/sitemap.xml
 ```
 
-#### sitemap.xml
+### sitemap.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -333,7 +333,7 @@ Sitemap: https://example.com/sitemap.xml
 </urlset>
 ```
 
-#### 404.html
+### 404.html
 ```html
 <main>
   <h1>Page not found (404)</h1>
@@ -341,7 +341,7 @@ Sitemap: https://example.com/sitemap.xml
 </main>
 ```
 
-#### Server Configuration (nginx)
+### Server Configuration (nginx)
 ```nginx
 error_page 404 /404.html;
 location = /404.html { 
@@ -351,11 +351,11 @@ location = /404.html {
 
 ---
 
-## CSS Architecture
+# CSS Architecture
 
-### 1. ITCSS + BEM Methodology with CSS Layers
+## ITCSS + BEM Methodology with CSS Layers
 
-#### 1.1 Layer Structure
+### Layer Structure
 
 ```css
 /* main.css */
@@ -368,7 +368,7 @@ location = /404.html {
 @import url('utilities/_u-spacing.css') layer(utilities);
 ```
 
-#### 1.2 Design Tokens
+### Design Tokens
 
 ```css
 :root {
@@ -408,7 +408,7 @@ location = /404.html {
 }
 ```
 
-#### 1.3 BEM Naming Convention
+### BEM Naming Convention
 
 ```css
 /* Block */
@@ -428,9 +428,9 @@ location = /404.html {
 .c-card.is-loading { }
 ```
 
-### 2. Responsive Design System
+### Responsive Design System
 
-#### 2.1 Mobile-First Grid
+##### Mobile-First Grid
 
 ```css
 .l-grid {
@@ -446,7 +446,7 @@ location = /404.html {
 }
 ```
 
-#### 2.2 Container Queries (Modern Approach)
+#### Container Queries (Modern Approach)
 
 ```css
 .c-card-container {
@@ -460,9 +460,9 @@ location = /404.html {
 }
 ```
 
-### 3. Performance CSS
+### Performance CSS
 
-#### 3.1 Critical CSS Strategy
+#### Critical CSS Strategy
 
 ```css
 /* Inline in <head> - Above the fold styles only */
@@ -471,7 +471,7 @@ body { margin: 0; font-family: system-ui; }
 .l-hero { min-height: 60vh; display: flex; align-items: center; }
 ```
 
-#### 3.2 Font Loading Optimization
+#### Font Loading Optimization
 
 ```css
 @font-face {
@@ -487,7 +487,7 @@ body { margin: 0; font-family: system-ui; }
 }
 ```
 
-### 4. Dark Mode Implementation
+### Dark Mode Implementation
 
 ```css
 /* Automatic dark mode */
@@ -517,11 +517,11 @@ body { margin: 0; font-family: system-ui; }
 
 ---
 
-## JavaScript Guidelines
+# JavaScript Guidelines
 
-### 1. Modern ES6+ Standards
+## Modern ES6+ Standards
 
-#### 1.1 Module Structure
+### Module Structure
 
 ```javascript
 // main.js
@@ -545,7 +545,7 @@ function init() {
 }
 ```
 
-#### 1.2 Component Class Pattern
+### Component Class Pattern
 
 ```javascript
 // modules/MenuController.js
@@ -601,9 +601,9 @@ export class MenuController {
 }
 ```
 
-### 2. Performance Optimization
+### Performance Optimization
 
-#### 2.1 Lazy Loading Implementation
+### Lazy Loading Implementation
 
 ```javascript
 // modules/LazyLoader.js
@@ -638,7 +638,7 @@ export class LazyLoader {
 }
 ```
 
-#### 2.2 Debounce & Throttle Utilities
+### Debounce & Throttle Utilities
 
 ```javascript
 // modules/utils.js
@@ -666,7 +666,7 @@ export function throttle(func, limit) {
 }
 ```
 
-### 3. Web Vitals Monitoring
+### Web Vitals Monitoring
 
 ```javascript
 // modules/PerformanceMonitor.js
@@ -707,7 +707,7 @@ export class PerformanceMonitor {
 }
 ```
 
-### 4. Progressive Enhancement
+### Progressive Enhancement
 
 ```javascript
 // Progressive form enhancement
@@ -783,11 +783,11 @@ class FormEnhancer {
 
 ---
 
-## Performance Optimization
+# Performance Optimization
 
-### 1. Image Optimization Strategy
+## Image Optimization Strategy
 
-#### 1.1 Responsive Images Implementation
+#### Responsive Images Implementation
 
 ```html
 <picture>
@@ -835,7 +835,8 @@ class FormEnhancer {
 ```
 
 ```css
-## 1.1.1 CSS fallback in a single rule (simpler)
+
+##### CSS fallback in a single rule (simpler)
 
 .hero-background {
   background-image: url("/img/bg.jpg"); /* fallback */
@@ -849,17 +850,15 @@ class FormEnhancer {
 }
 ```
 
-# 1.2 Modern Image Formats Guide
+### Modern Image Formats Guide
 
-A comprehensive guide for shipping optimized images with the smallest file sizes, acceptable quality, correct MIME types, and wide browser compatibility.
+#### Overview
 
-## Overview
+###### **Goal**: Ship the smallest files with acceptable quality, correct MIME types, and wide compatibility.
 
-**Goal:** Ship the smallest files with acceptable quality, correct MIME types, and wide compatibility.
+###### **Fallback Strategy:** AVIF → WebP → JPEG/PNG (SVG for vectors)
 
-**Fallback Strategy:** AVIF → WebP → JPEG/PNG (SVG for vectors)
-
-## Format Priority
+##### Format Priority
 
 | Format | Best For | Browser Support | File Size |
 |--------|----------|-----------------|-----------|
@@ -869,28 +868,28 @@ A comprehensive guide for shipping optimized images with the smallest file sizes
 | **PNG** | Transparency, crisp edges | Universal | Large |
 | **SVG** | Vector graphics, icons | Universal | Variable |
 
-## Use Cases
+##### Use Cases
 
-### 📸 Photographs
-- **Primary:** AVIF
-- **Fallback:** WebP
-- **Last resort:** JPEG
+##### Photographs
+###### **Primary:** AVIF
+###### **Fallback:** WebP
+###### **Last resort:** JPEG
 
-### 🎨 Logos/Icons/Flat Illustrations
-- **Preferred:** SVG
-- **Alternative:** AVIF/WebP
+##### Logos/Icons/Flat Illustrations
+###### **Preferred:** SVG
+###### **Alternative:** AVIF/WebP
 
-### 🖥️ UI Screenshots/Crisp Edges
-- **Primary:** AVIF (high quality)
-- **Fallback:** PNG if artifacts appear
+##### 🖥UI Screenshots/Crisp Edges
+###### **Primary:** AVIF (high quality)
+###### **Fallback:** PNG if artifacts appear
 
-### 🎬 Animations
-- **Short loops:** Animated AVIF/WebP
-- **Long/complex:** Video (`.mp4`/`.webm`)
+##### Animations
+###### **Short loops:** Animated AVIF/WebP
+###### **Long/complex:** Video (`.mp4`/`.webm`)
 
-## Implementation Examples
+#### Implementation Examples
 
-### Responsive Photo with Picture Element
+##### Responsive Photo with Picture Element
 
 ```html
 <!-- Hero/Photo Implementation -->
@@ -907,7 +906,7 @@ A comprehensive guide for shipping optimized images with the smallest file sizes
 </picture>
 ```
 
-### SVG Icons (Recommended)
+##### SVG Icons (Recommended)
 
 ```html
 <!-- Inline SVG Icon -->
@@ -916,7 +915,7 @@ A comprehensive guide for shipping optimized images with the smallest file sizes
 </svg>
 ```
 
-### CSS Background Images with Fallbacks
+##### CSS Background Images with Fallbacks
 
 ```css
 /* Modern CSS with image-set() */
@@ -941,44 +940,48 @@ A comprehensive guide for shipping optimized images with the smallest file sizes
 }
 ```
 
-## Encoding Commands
+#### Encoding Commands
 
-### AVIF Encoding
+##### AVIF Encoding
+
 ```bash
-# General purpose (good starting point)
+##### General purpose (good starting point)
 avifenc input.jpg -q 32 -s 6 -y 420 -o output.avif
 
-# High quality
+##### High quality
 avifenc input.jpg -q 20 -s 8 -y 444 -o output.avif
 
-# Small file size
+##### Small file size
 avifenc input.jpg -q 40 -s 4 -y 420 -o output.avif
 ```
 
-### WebP Encoding
+##### WebP Encoding
+
 ```bash
-# Photos (lossy compression)
+##### Photos (lossy compression)
 cwebp -q 80 input.jpg -o output.webp
 
-# Graphics/logos (lossless compression)
+##### Graphics/logos (lossless compression)
 cwebp -lossless -z 9 input.png -o output.webp
 
-# With transparency
+##### With transparency
 cwebp -q 80 -alpha_q 80 input.png -o output.webp
 ```
 
-### Batch Processing Example
+##### Batch Processing Example
+
 ```bash
-# Convert all JPEGs to AVIF and WebP
+##### Convert all JPEGs to AVIF and WebP
 for img in *.jpg; do
   avifenc "$img" -q 32 -s 6 -y 420 -o "${img%.jpg}.avif"
   cwebp -q 80 "$img" -o "${img%.jpg}.webp"
 done
 ```
 
-## Server Configuration
+#### Server Configuration
 
-### Nginx Configuration
+##### Nginx Configuration
+
 ```nginx
 http {
   include /etc/nginx/mime.types;
@@ -996,7 +999,8 @@ server {
 }
 ```
 
-### Apache Configuration
+##### Apache Configuration
+
 ```apache
 AddType image/avif .avif
 AddType image/webp .webp
@@ -1013,9 +1017,9 @@ AddType image/webp .webp
 </IfModule>
 ```
 
-## Best Practices
+#### Best Practices
 
-### ✅ Authoring Rules
+##### Authoring Rules
 
 - **Export multiple widths** and serve with `<picture>` + `srcset`
 - **Always set `width` and `height`** attributes to prevent Cumulative Layout Shift (CLS)
@@ -1025,14 +1029,14 @@ AddType image/webp .webp
 - **Use cache-friendly filenames** with hashes for 1-year caching
 - **Set HTML to no-cache** while images cache long-term
 
-### 🎯 Performance Tips
+##### Performance Tips
 
 - Use `loading="lazy"` for images below the fold
 - Use `loading="eager"` and `fetchpriority="high"` for above-the-fold images
 - Always include `decoding="async"` for better performance
 - Consider using CSS `aspect-ratio` for responsive containers
 
-### 📱 Responsive Considerations
+##### Responsive Considerations
 
 ```html
 <!-- Responsive sizes attribute examples -->
@@ -1041,7 +1045,7 @@ sizes="(max-width: 768px) 100vw, 50vw"  <!-- Mobile full, desktop half -->
 sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
 ```
 
-### 🔍 Testing and Validation
+##### Testing and Validation
 
 - Test images in multiple browsers
 - Validate MIME types are served correctly
@@ -1049,7 +1053,7 @@ sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
 - Verify CLS scores don't increase
 - Test with slow network connections
 
-## Browser Support
+##### Browser Support
 
 | Format | Chrome | Firefox | Safari | Edge |
 |--------|--------|---------|--------|------|
@@ -1061,7 +1065,7 @@ sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
 
 ---
 
-### 2. Resource Hints & Preloading
+### Resource Hints & Preloading
 
 ```html
 <head>
@@ -1087,7 +1091,7 @@ sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
 </head>
 ```
 
-### 3. Service Worker Implementation
+### Service Worker Implementation
 
 ```javascript
 // sw.js
@@ -1187,46 +1191,7 @@ self.addEventListener('fetch', (event) => {
 });
 ```
 
-### 4. Speculation Rules API
-
-#### 4.1 External File Approach (Recommended)
-
-```html
-<head>
-  <link rel="speculationrules" href="/speculation-rules.json">
-</head>
-```
-
-Create `/speculation-rules.json`:
-
-```json
-{
-  "prerender": [
-    { "source": "list", "urls": ["/about", "/products", "/contact"] },
-    {
-      "source": "document",
-      "where": {
-        "and": [
-          { "href_matches": "/*" },
-          { "not": { "href_matches": "/admin/*" } },
-          { "not": { "selector_matches": "[data-no-prerender]" } }
-        ]
-      },
-      "eagerness": "moderate"
-    }
-  ],
-  "prefetch": [
-    { 
-      "source": "document", 
-      "where": { "selector_matches": "a[href]" }, 
-      "eagerness": "conservative" 
-    }
-  ]
-}
-```
-## 5 Speculation Rules API
-
-    ### 5.1 From the Speculation Rules API Guide, here is a compact, English, copy-pasteable set of pieces you can directly reuse to build a fast HTML + CSS + JavaScript site. First, mark up navigation and links so the rules have something to target and keep a simple opt-out for sensitive routes: 
+### Speculation Rules API
 
 ```html
 <nav class="main-nav">
@@ -1238,13 +1203,13 @@ Create `/speculation-rules.json`:
 <link rel="prefetch" href="/category/popular">
 ```
 
-  ### Next, prefer a static JSON file of rules so it’s easy to version and audit, then reference it once in the page head: 
+#### Next, prefer a static JSON file of rules so it’s easy to version and audit, then reference it once in the page head: 
 
 ```javascript
 <script type="speculationrules" src="/speculation-rules.json"></script>
 ```
 
-  ### And in /speculation-rules.json use a safe default that prerenders product pages on hover and prefetches categories and nav: 
+#### And in /speculation-rules.json use a safe default that prerenders product pages on hover and prefetches categories and nav: 
 
 ```json
 {
@@ -1258,7 +1223,7 @@ Create `/speculation-rules.json`:
 }
 ```
 
-  ### Keep a tiny bootstrap that detects support and falls back to <link rel="prefetch"> so older browsers still benefit: 
+#### Keep a tiny bootstrap that detects support and falls back to <link rel="prefetch"> so older browsers still benefit: 
 
 ```javascript
 <script>
@@ -1276,7 +1241,7 @@ Create `/speculation-rules.json`:
 </script>
 ```
 
-  ### Add behavior-driven rules to create real UX wins without overdoing it. Prerender a product on hover, prefetch the next page in listings, and after some reading time prerender a few related posts: 
+#### Add behavior-driven rules to create real UX wins without overdoing it. Prerender a product on hover, prefetch the next page in listings, and after some reading time prerender a few related posts: 
 
 ```javascript
 <script>
@@ -1306,7 +1271,7 @@ Create `/speculation-rules.json`:
 </script>
 ```
 
-  ### Make the strategy adaptive so you avoid wasting CPU and bandwidth on low-end conditions or users in Data Saver. Only enable more aggressive prerendering if the device can handle it: 
+#### Make the strategy adaptive so you avoid wasting CPU and bandwidth on low-end conditions or users in Data Saver. Only enable more aggressive prerendering if the device can handle it: 
 
 ```javascript
 <script>
@@ -1327,7 +1292,7 @@ Create `/speculation-rules.json`:
 </script>
 ```
 
-  ### If you use a SPA or do client-side routing, clear old rules on route change before applying fresh ones so nothing “leaks” across pages: 
+#### If you use a SPA or do client-side routing, clear old rules on route change before applying fresh ones so nothing “leaks” across pages: 
 
 ```javascript
 <script>
@@ -1353,12 +1318,43 @@ Measure the impact so you know the rules are paying off. A minimal observer that
 </script>
 ```
 
-  ### To wrap up, keep eagerness sensible (conservative for likely clicks, moderate for hovers, immediate only for truly critical paths), filter out routes that must never prerender (admin, hash links, debug queries), prefer selector-based targeting for precision, and always pair this with good HTML semantics and image optimization so the navigation speedups translate into a noticeably faster, more polished site.
+#### To wrap up, keep eagerness sensible (conservative for likely clicks, moderate for hovers, immediate only for truly critical paths), filter out routes that must never prerender (admin, hash links, debug queries), prefer selector-based targeting for precision, and always pair this with good HTML semantics and image optimization so the navigation speedups translate into a noticeably faster, more polished site.
 
 
-### 6. Build Configuration
+## Build Configuration
 
- #### 6.1 Vite Configuration
+#### Versioned Assets & Caching Strategy
+
+```nginx
+# CDN configuration with Brotli/HTTP3 enabled
+# CI/CD pipeline: build → tests (lint/a11y/LHCI) → deploy → cache purge (e.g., Cloudflare)
+
+location ~* \.(css|js|png|jpg|svg|woff2)$ {
+  add_header Cache-Control "public, max-age=31536000, immutable";
+}
+
+location ~* \.(html)$ {
+  add_header Cache-Control "no-cache";
+}
+```
+
+#### Build Script Configuration
+
+```json
+{
+  "scripts": {
+    "build": "npm run clean && npm run build:css && npm run build:js && npm run build:html",
+    "build:css": "postcss src/css/main.css -o dist/css/main.css",
+    "build:js": "esbuild src/js/main.js --bundle --minify --outfile=dist/js/main.js",
+    "build:html": "node scripts/build-html.js",
+    "clean": "rimraf dist",
+    "serve": "serve dist -p 3000",
+    "preview": "npm run build && npm run serve"
+  }
+}
+```
+
+### Vite Configuration
 
 ```javascript
 // vite.config.js
@@ -1419,9 +1415,7 @@ export default defineConfig({
 });
 ```
 
-## PostCSS Configuration
-
-### 6.2 PostCSS Configuration
+### PostCSS Configuration
 
 ```javascript
 // postcss.config.js
@@ -1476,7 +1470,7 @@ export default {
 };
 ```
 
-### 6.3 Reinforced PurgeCSS Safelist
+##### Reinforced PurgeCSS Safelist
 
 ```javascript
 // postcss.config.js (PurgeCSS section)
@@ -1492,235 +1486,8 @@ purgecss({
 
 ---
 
-## Build & Deployment
 
-### 7.1 Versioned Assets & Caching Strategy
 
-```nginx
-# CDN configuration with Brotli/HTTP3 enabled
-# CI/CD pipeline: build → tests (lint/a11y/LHCI) → deploy → cache purge (e.g., Cloudflare)
-
-location ~* \.(css|js|png|jpg|svg|woff2)$ {
-  add_header Cache-Control "public, max-age=31536000, immutable";
-}
-
-location ~* \.(html)$ {
-  add_header Cache-Control "no-cache";
-}
-```
-
-### 6.2 Build Script Configuration
-
-```json
-{
-  "scripts": {
-    "build": "npm run clean && npm run build:css && npm run build:js && npm run build:html",
-    "build:css": "postcss src/css/main.css -o dist/css/main.css",
-    "build:js": "esbuild src/js/main.js --bundle --minify --outfile=dist/js/main.js",
-    "build:html": "node scripts/build-html.js",
-    "clean": "rimraf dist",
-    "serve": "serve dist -p 3000",
-    "preview": "npm run build && npm run serve"
-  }
-}
-```
-
----
-
-## Quality Assurance
-
-### 1. Testing Configuration
-
-#### 1.1 Jest Unit Testing
-
-```javascript
-// jest.config.js
-export default {
-    testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
-    moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
-        '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
-    },
-    collectCoverageFrom: [
-        'src/**/*.js',
-        '!src/**/*.test.js',
-        '!src/vendor/**'
-    ],
-    coverageThreshold: {
-        global: {
-            branches: 80,
-            functions: 80,
-            lines: 80,
-            statements: 80
-        }
-    }
-};
-```
-
-**Example Test:**
-
-```javascript
-// tests/FormValidator.test.js
-import { FormValidator } from '../src/modules/FormValidator.js';
-
-describe('FormValidator', () => {
-    let form, validator;
-    
-    beforeEach(() => {
-        document.body.innerHTML = `
-            <form id="test-form">
-                <input type="email" name="email" required>
-                <button type="submit">Submit</button>
-            </form>
-        `;
-        form = document.getElementById('test-form');
-        validator = new FormValidator(form);
-    });
-    
-    test('validates email field correctly', () => {
-        const emailInput = form.querySelector('input[name="email"]');
-        
-        emailInput.value = 'invalid-email';
-        expect(validator.validateField(emailInput)).toBe(false);
-        
-        emailInput.value = 'valid@email.com';
-        expect(validator.validateField(emailInput)).toBe(true);
-    });
-});
-```
-
-#### 1.2 Playwright E2E Testing
-
-```javascript
-// playwright.config.js
-export default {
-    testDir: './tests/e2e',
-    timeout: 30000,
-    fullyParallel: true,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
-    reporter: 'html',
-    use: {
-        baseURL: 'http://localhost:3000',
-        trace: 'on-first-retry',
-        screenshot: 'only-on-failure'
-    },
-    projects: [
-        {
-            name: 'chromium',
-            use: { ...devices['Desktop Chrome'] }
-        },
-        {
-            name: 'firefox',
-            use: { ...devices['Desktop Firefox'] }
-        },
-        {
-            name: 'webkit',
-            use: { ...devices['Desktop Safari'] }
-        },
-        {
-            name: 'Mobile Chrome',
-            use: { ...devices['Pixel 5'] }
-        },
-        {
-            name: 'Mobile Safari',
-            use: { ...devices['iPhone 12'] }
-        }
-    ],
-    webServer: {
-        command: 'npm run preview',
-        port: 3000,
-        reuseExistingServer: !process.env.CI
-    }
-};
-```
-
-**Example E2E Test:**
-
-```javascript
-// tests/e2e/navigation.spec.js
-import { test, expect } from '@playwright/test';
-
-test.describe('Navigation', () => {
-    test('should navigate to all main pages', async ({ page }) => {
-        await page.goto('/');
-        
-        // Test navigation menu
-        await page.click('nav a[href="/about"]');
-        await expect(page).toHaveURL('/about');
-        await expect(page).toHaveTitle(/About/);
-        
-        // Test mobile menu
-        await page.setViewportSize({ width: 375, height: 667 });
-        await page.click('[data-menu-trigger]');
-        await expect(page.locator('[data-menu]')).toBeVisible();
-    });
-    
-    test('should have working skip link', async ({ page }) => {
-        await page.goto('/');
-        await page.keyboard.press('Tab');
-        
-        const skipLink = page.locator('.skip-link');
-        await expect(skipLink).toBeFocused();
-        await skipLink.click();
-        
-        await expect(page.locator('#main')).toBeFocused();
-    });
-});
-```
-
-### 2. Performance Budget
-
-```json
-// budget.json
-{
-    "path": "/*",
-    "timings": [
-        {
-            "metric": "first-contentful-paint",
-            "budget": 1000
-        },
-        {
-            "metric": "largest-contentful-paint",
-            "budget": 2500
-        },
-        {
-            "metric": "cumulative-layout-shift",
-            "budget": 0.1
-        },
-        {
-            "metric": "total-blocking-time",
-            "budget": 200
-        }
-    ],
-    "resourceSizes": [
-        {
-            "resourceType": "script",
-            "budget": 150000
-        },
-        {
-            "resourceType": "stylesheet",
-            "budget": 100000
-        },
-        {
-            "resourceType": "image",
-            "budget": 500000
-        },
-        {
-            "resourceType": "total",
-            "budget": 1000000
-        }
-    ],
-    "resourceCounts": [
-        {
-            "resourceType": "third-party",
-            "budget": 5
-        }
-    ]
-}
-```
 
 ---
 
@@ -1839,6 +1606,153 @@ new RealUserMonitoring();
   gtag('config', 'G-XXXX');
 </script>
 ```
+## Quality Assurance
+
+### 1. Testing Configuration
+
+#### 1.1 Jest Unit Testing
+
+```javascript
+// jest.config.js
+export default {
+    testEnvironment: 'jsdom',
+    setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
+    },
+    collectCoverageFrom: [
+        'src/**/*.js',
+        '!src/**/*.test.js',
+        '!src/vendor/**'
+    ],
+    coverageThreshold: {
+        global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80
+        }
+    }
+};
+```
+
+**Example Test:**
+
+```javascript
+// tests/FormValidator.test.js
+import { FormValidator } from '../src/modules/FormValidator.js';
+
+describe('FormValidator', () => {
+    let form, validator;
+    
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <form id="test-form">
+                <input type="email" name="email" required>
+                <button type="submit">Submit</button>
+            </form>
+        `;
+        form = document.getElementById('test-form');
+        validator = new FormValidator(form);
+    });
+    
+    test('validates email field correctly', () => {
+        const emailInput = form.querySelector('input[name="email"]');
+        
+        emailInput.value = 'invalid-email';
+        expect(validator.validateField(emailInput)).toBe(false);
+        
+        emailInput.value = 'valid@email.com';
+        expect(validator.validateField(emailInput)).toBe(true);
+    });
+});
+```
+
+**Example E2E Test:**
+
+```javascript
+// tests/e2e/navigation.spec.js
+import { test, expect } from '@playwright/test';
+
+test.describe('Navigation', () => {
+    test('should navigate to all main pages', async ({ page }) => {
+        await page.goto('/');
+        
+        // Test navigation menu
+        await page.click('nav a[href="/about"]');
+        await expect(page).toHaveURL('/about');
+        await expect(page).toHaveTitle(/About/);
+        
+        // Test mobile menu
+        await page.setViewportSize({ width: 375, height: 667 });
+        await page.click('[data-menu-trigger]');
+        await expect(page.locator('[data-menu]')).toBeVisible();
+    });
+    
+    test('should have working skip link', async ({ page }) => {
+        await page.goto('/');
+        await page.keyboard.press('Tab');
+        
+        const skipLink = page.locator('.skip-link');
+        await expect(skipLink).toBeFocused();
+        await skipLink.click();
+        
+        await expect(page.locator('#main')).toBeFocused();
+    });
+});
+```
+
+### 2. Performance Budget
+
+```json
+// budget.json
+{
+    "path": "/*",
+    "timings": [
+        {
+            "metric": "first-contentful-paint",
+            "budget": 1000
+        },
+        {
+            "metric": "largest-contentful-paint",
+            "budget": 2500
+        },
+        {
+            "metric": "cumulative-layout-shift",
+            "budget": 0.1
+        },
+        {
+            "metric": "total-blocking-time",
+            "budget": 200
+        }
+    ],
+    "resourceSizes": [
+        {
+            "resourceType": "script",
+            "budget": 150000
+        },
+        {
+            "resourceType": "stylesheet",
+            "budget": 100000
+        },
+        {
+            "resourceType": "image",
+            "budget": 500000
+        },
+        {
+            "resourceType": "total",
+            "budget": 1000000
+        }
+    ],
+    "resourceCounts": [
+        {
+            "resourceType": "third-party",
+            "budget": 5
+        }
+    ]
+}
+```
 
 ### Speculation Rules API
 
@@ -1866,6 +1780,27 @@ new RealUserMonitoring();
   ]
 }
 ```
+
+## Deployment instructions documented
+
+### Versioned Assets & Caching Strategy
+
+```nginx
+# CDN configuration with Brotli/HTTP3 enabled
+# CI/CD pipeline: build → tests (lint/a11y/LHCI) → deploy → cache purge (e.g., Cloudflare)
+
+location ~* \.(css|js|png|jpg|svg|woff2)$ {
+  add_header Cache-Control "public, max-age=31536000, immutable";
+}
+
+location ~* \.(html)$ {
+  add_header Cache-Control "no-cache";
+}
+```
+
+---
+
+
 
 ---
 
