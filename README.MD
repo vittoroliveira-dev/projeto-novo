@@ -93,14 +93,16 @@
   - [Documentation](#documentation)
 
 - [Production Checklist](#-production-checklist)
-  - [HTML & SEO]()
-  - [CSS & Performance](#css--performance)
+  - [Code Quality]()
+  - [Performance](#css--performance)
   - [JavaScript & Functionality]()
-  - [Accessibility & UX]()
+  - [Accessibility]()
   - [Security](#security)
-  - [Performance](#performance)
-  - [Testing & Monitoring]()
-  - [Build & Deployment](#build--deployment)
+  - [Progressive Web App]()
+  - [Monitoring & Analytics]()
+  - [Infrastructure]()
+  - [Testing]()
+  - [Documentation]()
 
 ---
 
