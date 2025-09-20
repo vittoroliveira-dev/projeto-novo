@@ -17,10 +17,10 @@
 
 - [SEO and Indexing](#seo-and-indexing)
   - [Required Files](#required-files)
-  - [robots.txt](#robotstxt)
-  - [sitemap.xml](#sitemapxml)
-  - [404.html](#404html)
-  - [Server Configuration (nginx)](#server-configuration-nginx)
+    - [robots.txt](#robotstxt)
+    - [sitemap.xml](#sitemapxml)
+    - [404.html](#404html)
+    - [Server Configuration (nginx)](#server-configuration-nginx)
 
 - [CSS Architecture](#css-architecture)
   - [ITCSS + BEM Methodology](#itcss--bem-methodology)
