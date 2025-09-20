@@ -1791,12 +1791,14 @@ Content-Security-Policy:
 
 ### clarify “Key Directives You Must Use” section:
 
+```http
 script-src 'self' [NONCES_OR_HASHES] 'strict-dynamic';
 script-src-attr 'none';
 style-src 'self' ['nonce-XYZ' | 'sha256-…']; /* avoid 'unsafe-inline' when possible */
 style-src-attr 'none';
 base-uri 'self';
 report-to csp-endpoint; /* optional reporting */
+```
 
 - Add — nonce note (dynamic servers):
   - Generate a cryptographically secure nonce per request.
@@ -1807,7 +1809,7 @@ report-to csp-endpoint; /* optional reporting */
   - Compute SHA256/384/512 of the exact inline content at build time.
   - Any change to the inline content requires updating the hash in the header.
 
-### Add — Trusted Types (Chromium hardening; harmless elsewhere):
+#### Add — Trusted Types (Chromium hardening; harmless elsewhere):
 
 ```http
 Content-Security-Policy: ...; require-trusted-types-for 'script'; trusted-types default dompurify;
