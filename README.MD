@@ -726,61 +726,97 @@ export class MenuController {
 ### Lazy Loading Implementation
 
 ```javascript
+// LazyLoader.js (robust fallback, srcset/picture, wider rootMargin):
 // modules/LazyLoader.js
-export class LazyLoader {
-  constructor() {
-    this.images = document.querySelectorAll('img[loading="lazy"]');
-    this.imageObserver = null;
-    
+```javascript
+ // LazyLoader.js (robust fallback, srcset/picture, wider rootMargin):
+ // modules/LazyLoader.js
+ export class LazyLoader {
+   constructor() {
+    this.images = document.querySelectorAll('img[loading="lazy"], iframe[loading="lazy"]');
+     this.imageObserver = null;
+
     // Fallback for browsers without native lazy loading
     if (!('loading' in HTMLImageElement.prototype)) {
-      this.initIntersectionObserver();
-    }
-  }
-  
-  initIntersectionObserver() {
+       this.initIntersectionObserver();
+     }
+   }
+   
+   initIntersectionObserver() {
     this.imageObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = img.dataset.src;
-          img.classList.add('is-loaded');
-          this.imageObserver.unobserve(img);
-        }
-      });
-    }, {
-      rootMargin: '50px 0px',
-      threshold: 0.01
-    });
-    
-    this.images.forEach(img => this.imageObserver.observe(img));
-  }
-}
+       entries.forEach(entry => {
+         if (entry.isIntersecting) {
+          const node = entry.target;
+          // <picture> support
+          if (node.parentElement?.tagName === 'PICTURE') {
+            node.parentElement.querySelectorAll('source').forEach(src => {
+              if (src.dataset.srcset) src.srcset = src.dataset.srcset;
+            });
+          }
+          // img/iframe attributes
+          if (node.dataset.srcset) node.srcset = node.dataset.srcset;
+          if (node.dataset.sizes) node.sizes = node.dataset.sizes;
+          if (node.dataset.src) node.src = node.dataset.src;
+          node.decode?.().catch(() => {}).finally(() => node.classList.add('is-loaded'));
+          this.imageObserver.unobserve(node);
+         }
+       });
+     }, {
+      rootMargin: '300px 0px',
+       threshold: 0.01
+     });
+     
+     this.images.forEach(img => this.imageObserver.observe(img));
+    // Cleanup on tab hide
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') this.imageObserver.disconnect();
+    }, { once: true });
+   }
+ }
 ```
+
+#### **Note:**
+
+- Markup note (no code change here): for the fallback to work, use data-src, data-srcset, and data-sizes on lazy elements, plus a low-risk placeholder src if needed.
 
 ### Debounce & Throttle Utilities
 
 ```javascript
-// modules/utils.js
-export function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
+ // utils.js (preserve context, cancel/flush options):
+ // modules/utils.js
+
+export function debounce(fn, wait = 200, { leading = false, trailing = true } = {}) {
+  let timeout, lastArgs, lastThis, result;
+  const invoke = () => { const r = fn.apply(lastThis, lastArgs); lastArgs = lastThis = undefined; return r; };
+  const later = () => { timeout = undefined; if (trailing && lastArgs) result = invoke(); };
+  function debounced(...args) {
+    lastArgs = args; lastThis = this;
+    const callNow = leading && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-  };
+    if (callNow) result = invoke();
+    return result;
+  }
+  debounced.cancel = () => { clearTimeout(timeout); timeout = lastArgs = lastThis = undefined; };
+  debounced.flush = () => { if (timeout) { clearTimeout(timeout); later(); } return result; };
+  return debounced;
 }
+ 
 
-export function throttle(func, limit) {
-  let inThrottle;
-  return function(...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+export function throttle(fn, limit = 200, { leading = true, trailing = true } = {}) {
+  let last = 0, timeout, lastArgs, lastThis;
+  function invoke(now) { last = now; const r = fn.apply(lastThis, lastArgs); lastArgs = lastThis = undefined; return r; }
+  return function throttled(...args) {
+    const now = Date.now();
+    if (!last && !leading) last = now;
+    const remaining = limit - (now - last);
+    lastArgs = args; lastThis = this;
+    if (remaining <= 0) {
+      if (timeout) { clearTimeout(timeout); timeout = undefined; }
+      return invoke(now);
+    }
+    if (trailing && !timeout) {
+      timeout = setTimeout(() => { timeout = undefined; invoke(Date.now()); }, remaining);
     }
   };
 }
@@ -830,75 +866,61 @@ export class PerformanceMonitor {
 ### Progressive Enhancement
 
 ```javascript
-// Progressive form enhancement
-class FormEnhancer {
-  constructor(form) {
-    this.form = form;
-    this.init();
-  }
-  
-  init() {
-    // Works without JS
-    this.form.addEventListener('submit', this.handleSubmit.bind(this));
-    
-    // Enhanced features
-    this.addRealtimeValidation();
-    this.addAutoSave();
-  }
-  
-  async handleSubmit(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this.form);
-    
-    try {
-      const response = await fetch(this.form.action, {
-        method: this.form.method,
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-      
-      if (response.ok) {
-        this.showSuccess();
-      } else {
-        this.showError();
+ // PerformanceMonitor.js (self-hosted ESM, GA4/beacon, extra error hook):
+ // modules/PerformanceMonitor.js
+ export class PerformanceMonitor {
+   constructor() {
+     this.initWebVitals();
+     this.trackErrors();
+   }
+ 
+   async initWebVitals() {
+    // Prefer bundling via Vite: `npm i web-vitals`
+    const { onLCP, onINP, onCLS, onFCP, onTTFB } = await import('web-vitals/attribution');
+    const send = (metric) => {
+      // GA4 if available
+      if (window.gtag) {
+        window.gtag('event', metric.name, {
+          value: Math.round(metric.value),
+          event_label: metric.id,
+          non_interaction: true
+        });
       }
-    } catch (error) {
-      // Fallback to regular form submission
-      this.form.submit();
-    }
-  }
-  
-  addRealtimeValidation() {
-    const inputs = this.form.querySelectorAll('input, textarea, select');
-    
-    inputs.forEach(input => {
-      input.addEventListener('blur', () => this.validateField(input));
+      // Self-hosted endpoint (optional)
+      const body = JSON.stringify(metric);
+      if (!navigator.sendBeacon || !navigator.sendBeacon('/metrics', body)) {
+        console.log('[web-vitals]', metric);
+      }
+    };
+     
+     onLCP(send);
+     onINP(send);
+     onCLS(send);
+     onFCP(send);
+     onTTFB(send);
+
+    // Flush pending metrics on pagehide
+    const flush = () => { /* no-op: send() uses Beacon/console */ };
+    addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flush();
     });
-  }
-  
-  validateField(field) {
-    const isValid = field.checkValidity();
-    
-    field.setAttribute('aria-invalid', !isValid);
-    
-    const errorEl = document.getElementById(field.getAttribute('aria-describedby'));
-    if (errorEl) {
-      errorEl.textContent = isValid ? '' : field.validationMessage;
-    }
-  }
-  
-  addAutoSave() {
-    const saveData = debounce(() => {
-      const data = new FormData(this.form);
-      localStorage.setItem(`form-${this.form.id}`, JSON.stringify(Object.fromEntries(data)));
-    }, 1000);
-    
-    this.form.addEventListener('input', saveData);
-  }
-}
+   }
+ 
+   trackErrors() {
+     window.addEventListener('error', (e) => {
+       const payload = {
+         msg: e.message,
+         src: e.filename,
+         line: e.lineno,
+         col: e.colno
+       };
+       console.warn('[error]', payload);
+     });
+    window.addEventListener('unhandledrejection', (e) => {
+      console.warn('[unhandledrejection]', { reason: String(e.reason) });
+    });
+   }
+ }
 ```
 
 ---
