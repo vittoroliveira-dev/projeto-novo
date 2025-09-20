@@ -355,6 +355,13 @@
  </script>
 ```
 
+#### **Notes:**
+
+- Use `@id` to link nodes (e.g., `WebSite.publisher` → `#organization`).
+- Provide the phone number in `E.164` format without dashes.
+- Set `availableLanguage` as an array containing `"pt-BR`".
+- Use trailing slashes on URLs for canonical consistency.
+
 ---
 
 # SEO and Indexing
