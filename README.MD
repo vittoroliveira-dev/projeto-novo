@@ -1615,258 +1615,234 @@ self.addEventListener('message', (event) => {
 - Cache hashed assets aggressively via HTTP headers; SW should not fight server caching.
 - Keep PWA optional. If you do not need offline, skip the SW entirely.
 
-### Vite Configuration
-
-```javascript
-// vite.config.js
-import { defineConfig } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
-import viteCompression from 'vite-plugin-compression';
-import viteImagemin from 'vite-plugin-imagemin';
-
-export default defineConfig({
-  root: 'src',
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: { 
-        main: 'src/index.html', 
-        about: 'src/about.html' 
-      },
-      output: {
-        assetFileNames: 'assets/[name]-[hash][extname]',
-        chunkFileNames: 'js/[name]-[hash].js',
-        entryFileNames: 'js/[name]-[hash].js'
-      }
-    },
-    minify: 'terser',
-    terserOptions: { 
-      compress: { 
-        drop_console: true, 
-        drop_debugger: true 
-      } 
-    },
-    cssMinify: true,
-    assetsInlineLimit: 4096,
-    reportCompressedSize: true
-  },
-  plugins: [
-    createHtmlPlugin({ minify: true }),
-    viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
-    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
-    viteImagemin({
-      gifsicle: { optimizationLevel: 3 },
-      optipng: { optimizationLevel: 5 },
-      mozjpeg: { quality: 75 },
-      pngquant: { quality: [0.65, 0.9], speed: 4 },
-      svgo: { 
-        plugins: [
-          { name: 'removeViewBox', active: false },
-          { name: 'removeEmptyAttrs', active: true }
-        ] 
-      },
-      webp: { quality: 75 },
-      avif: { quality: 50 }
-    })
-  ],
-  css: { postcss: './postcss.config.js' },
-  server: { port: 3000, https: true, open: true },
-  preview: { port: 8080, https: true }
-});
-```
-
-### PostCSS Configuration
-
-```javascript
-// postcss.config.js
-import postcssPresetEnv from 'postcss-preset-env';
-import autoprefixer from 'autoprefixer';
-import cssnano from 'cssnano';
-import purgecss from '@fullhuman/postcss-purgecss';
-
-export default {
-    plugins: [
-        postcssPresetEnv({
-            stage: 2,
-            features: {
-                'nesting-rules': true,
-                'custom-properties': true,
-                'custom-media-queries': true,
-                'has-pseudo-class': true,
-                'gap-properties': true,
-                'overflow-wrap-property': true
-            }
-        }),
-        
-        autoprefixer({
-            grid: 'autoplace'
-        }),
-        
-        ...(process.env.NODE_ENV === 'production' ? [
-            purgecss({
-                content: ['./src/**/*.html', './src/**/*.js'],
-                safelist: {
-                    standard: [/^is-/, /^has-/, /^js-/],
-                    deep: [/^modal/, /^tooltip/],
-                    greedy: [/^swiper/]
-                }
-            }),
-            
-            cssnano({
-                preset: ['advanced', {
-                    discardComments: { removeAll: true },
-                    reduceIdents: true,
-                    mergeIdents: true,
-                    discardUnused: true,
-                    minifySelectors: true,
-                    minifyParams: true,
-                    minifyFontValues: true,
-                    normalizeUrl: true,
-                    colormin: true
-                }]
-            })
-        ] : [])
-    ]
-};
-```
-
-##### Reinforced PurgeCSS Safelist
-
-```javascript
-// postcss.config.js (PurgeCSS section)
-purgecss({
-  content: ['./src/**/*.html', './src/**/*.js'],
-  safelist: {
-    standard: [/^is-/, /^has-/, /^u-/, /^c-/, /^l-/, /^js-/],
-    deep: [/^modal/, /^tooltip/, /^toast/],
-    greedy: [/^swiper/]
-  }
-})
-```
-
 ---
 
-
-
-
----
+# Security Implementation
 
 ## Performance Monitoring
 
-### Real User Monitoring (RUM)
-
 ```javascript
 // monitoring/rum.js
-class RealUserMonitoring {
-    constructor() {
-        this.metrics = {};
-        this.init();
-    }
-    
-    init() {
-        // Navigation Timing
-        if (window.performance && performance.timing) {
-            window.addEventListener('load', () => {
-                const timing = performance.timing;
-                this.metrics.pageLoadTime = timing.loadEventEnd - timing.navigationStart;
-                this.metrics.domContentLoaded = timing.domContentLoadedEventEnd - timing.navigationStart;
-                this.metrics.ttfb = timing.responseStart - timing.navigationStart;
-                this.sendMetrics();
-            });
-        }
-        
-        // Core Web Vitals
-        if ('web-vitals' in window) {
-            import('https://unpkg.com/web-vitals/dist/web-vitals.js').then(({ onCLS, onINP, onLCP }) => {
-                onCLS(metric => this.recordMetric('CLS', metric));
-                onINP(metric => this.recordMetric('INP', metric));
-                onLCP(metric => this.recordMetric('LCP', metric));
-            });
-        }
-        
-        // JavaScript Errors
-        window.addEventListener('error', (event) => {
-            this.recordError({
-                message: event.message,
-                source: event.filename,
-                lineno: event.lineno,
-                colno: event.colno,
-                stack: event.error?.stack
-            });
-        });
-        
-        // Resource Performance
-        if (window.PerformanceObserver) {
-            const observer = new PerformanceObserver((list) => {
-                for (const entry of list.getEntries()) {
-                    if (entry.entryType === 'resource') {
-                        this.recordResourceTiming(entry);
-                    }
-                }
-            });
-            observer.observe({ entryTypes: ['resource'] });
-        }
-    }
-    
-    recordMetric(name, metric) {
-        this.metrics[name] = {
-            value: metric.value,
-            delta: metric.delta,
-            id: metric.id
-        };
-        this.sendMetrics();
-    }
-    
-    recordError(error) {
-        fetch('/api/errors', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                ...error,
-                url: window.location.href,
-                userAgent: navigator.userAgent,
-                timestamp: new Date().toISOString()
-            })
-        });
-    }
-    
-    recordResourceTiming(entry) {
-        if (entry.duration > 1000) { // Log slow resources
-            this.metrics[`slow_resource_${entry.name}`] = {
-                duration: entry.duration,
-                size: entry.transferSize
-            };
-        }
-    }
-    
-    sendMetrics() {
-        if (navigator.sendBeacon) {
-            navigator.sendBeacon('/api/metrics', JSON.stringify({
-                metrics: this.metrics,
-                url: window.location.href,
-                timestamp: new Date().toISOString()
-            }));
-        }
-    }
-}
+// Self-hosted, sampled RUM with modern Navigation Timing and Web Vitals.
+const SAMPLE_RATE = 0.25; // 25% of sessions
+const RUM_ENDPOINT = '%BASE_URL%api/metrics';   // adjust to your backend
+const ERR_ENDPOINT = '%BASE_URL%api/errors';    // adjust to your backend
 
-// Initialize monitoring
-new RealUserMonitoring();
+if (Math.random() < SAMPLE_RATE && document.visibilityState !== 'prerender') {
+  (async function RUM() {
+    const state = { metrics: {} };
+    const send = (type, data) => {
+      const body = JSON.stringify({ type, data, url: location.href, t: Date.now() });
+      if (!navigator.sendBeacon || !navigator.sendBeacon(RUM_ENDPOINT, body)) {
+        fetch(RUM_ENDPOINT, { method: 'POST', body, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(() => {});
+      }
+    };
+
+    // Navigation Timing Level 2
+    addEventListener('load', () => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      if (nav) {
+        state.metrics.nav = {
+          ttfb: Math.max(0, nav.responseStart - nav.requestStart),
+          domContentLoaded: Math.max(0, nav.domContentLoadedEventEnd - nav.startTime),
+          loadEvent: Math.max(0, nav.loadEventEnd - nav.startTime)
+        };
+        send('nav', state.metrics.nav);
+      }
+    }, { once: true });
+
+    // Web Vitals (bundle via Vite: npm i web-vitals)
+    try {
+      const { onLCP, onINP, onCLS, onFCP, onTTFB } = await import('web-vitals/attribution');
+      const ship = (m) => send('vital', {
+        name: m.name, value: m.value, id: m.id, rating: m.rating,
+        navigationType: performance.getEntriesByType('navigation')[0]?.type
+      });
+      onLCP(ship); onINP(ship); onCLS(ship); onFCP(ship); onTTFB(ship);
+    } catch {}
+
+    // Long tasks (Chrome)
+    if ('PerformanceObserver' in window) {
+      try {
+        const lt = new PerformanceObserver((list) => {
+          const tasks = list.getEntries().map(e => ({ name: e.name, start: e.startTime, dur: e.duration }));
+          if (tasks.length) send('longtasks', tasks);
+        });
+        lt.observe({ entryTypes: ['longtask'] });
+      } catch {}
+    }
+
+    // Resource timing (same-origin only; cross-origin often zeroed)
+    if ('PerformanceObserver' in window) {
+      try {
+        const rt = new PerformanceObserver((list) => {
+          const slow = list.getEntries()
+            .filter(e => e.initiatorType !== 'beacon' && e.duration > 1000)
+            .slice(0, 20) // cap payload
+            .map(e => ({ name: e.name, type: e.initiatorType, dur: e.duration, size: e.transferSize || e.encodedBodySize || 0 }));
+          if (slow.length) send('resources', slow);
+        });
+        rt.observe({ entryTypes: ['resource'] });
+      } catch {}
+    }
+
+    // JS errors
+    addEventListener('error', (ev) => {
+      const payload = {
+        msg: ev.message || 'ResourceError',
+        src: ev.filename || (ev.target && ev.target.src) || null,
+        line: ev.lineno, col: ev.colno
+      };
+      const body = JSON.stringify({ url: location.href, t: Date.now(), ...payload });
+      if (!navigator.sendBeacon || !navigator.sendBeacon(ERR_ENDPOINT, body)) {
+        fetch(ERR_ENDPOINT, { method: 'POST', body, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(() => {});
+      }
+    }, true);
+    addEventListener('unhandledrejection', (ev) => {
+      const body = JSON.stringify({ url: location.href, t: Date.now(), reason: String(ev.reason) });
+      if (!navigator.sendBeacon || !navigator.sendBeacon(ERR_ENDPOINT, body)) {
+        fetch(ERR_ENDPOINT, { method: 'POST', body, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(() => {});
+      }
+    });
+
+    // Flush before unload
+    addEventListener('pagehide', () => send('final', {}), { once: true });
+  })();
+}
 ```
 
-### Google Analytics 4 (CSP Compatible)
+## Google TAG - (GA4, CSP-safe, consent mode, SPA-ready)
 
 ```html
-<!-- GA4 with CSP nonce -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXX" nonce="{NONCE}"></script>
+<!-- GA4 (nonce only on inline; external allowed via CSP) -->
+<link rel="preconnect" href="https://www.google-analytics.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXX"></script>
 <script nonce="{NONCE}">
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+ // Consent Mode default (deny until user accepts; adapt as needed)
+ gtag('consent', 'default', {
+   ad_storage: 'denied',
+   analytics_storage: 'denied',
+   ad_user_data: 'denied',
+   ad_personalization: 'denied',
+   wait_for_update: 500
+ });
+
   gtag('js', new Date());
-  gtag('config', 'G-XXXX');
+
+ // SPA note: disable auto page_view if you will send your own events
+ // gtag('config', 'G-XXXX', { send_page_view: false });
+ gtag('config', 'G-XXXX', {
+   transport_type: 'beacon'
+ });
+
+ // Example SPA route tracking (call on each route change)
+ // function trackPageView(path){ gtag('event', 'page_view', { page_location: location.originpath }); }
+ </script>
+```
+
+## Content Security Policy 
+
+### Tighten CSP (nonce path) and add missing directives
+
+```http
+ Content-Security-Policy:
+  default-src 'self';
+  base-uri 'self';
+  object-src 'none';
+  frame-ancestors 'none';
+  form-action 'self';
+  script-src 'self' 'nonce-RANDOM_VALUE_HERE' 'strict-dynamic';
+  script-src-attr 'none';
+  style-src 'self'; /* add 'nonce-...' or hash if you inline critical CSS */
+  style-src-attr 'none';
+  img-src 'self' data: https:;
+  font-src 'self' https://fonts.gstatic.com;
+  connect-src 'self' https://api.your-service.com;
+  upgrade-insecure-requests;
+  report-to csp-endpoint; report-uri https://report.example.com/csp  /* optional */
+```
+
+#### **Notes:**
+- With a nonce + `'strict-dynamic'`, you usually do not need to whitelist CDNs in `script-src`. Any script loaded by a trusted nonce-bearing script is trusted.
+- If you inline critical CSS, prefer `style-src 'self' 'nonce-…'` or a `sha256-…` hash instead of `'unsafe-inline'`.
+- Keep `script-src-attr 'none'` to kill inline event handlers (`onclick`, etc).
+
+### static-site (hash path) example:
+
+```http
+Content-Security-Policy:
+  default-src 'self';
+  base-uri 'self';
+  object-src 'none';
+  frame-ancestors 'none';
+  form-action 'self';
+  script-src 'self' 'sha256-<HASH_OF_INLINE_SCRIPT>';
+  script-src-attr 'none';
+  style-src 'self' 'sha256-<HASH_OF_INLINE_CRITICAL_CSS>'; /* or omit if no inline CSS */
+  style-src-attr 'none';
+  img-src 'self' data: https:;
+  font-src 'self' https://fonts.gstatic.com;
+  connect-src 'self' https://api.your-service.com;
+  upgrade-insecure-requests;
+```
+
+### clarify “Key Directives You Must Use” section:
+
+script-src 'self' [NONCES_OR_HASHES] 'strict-dynamic';
+script-src-attr 'none';
+style-src 'self' ['nonce-XYZ' | 'sha256-…']; /* avoid 'unsafe-inline' when possible */
+style-src-attr 'none';
+base-uri 'self';
+report-to csp-endpoint; /* optional reporting */
+
+- Add — nonce note (dynamic servers):
+  - Generate a cryptographically secure nonce per request.
+  - Apply the same nonce to every inline `<script nonce="…">`.
+  - Avoid mixing nonced and non-nonced inline scripts.
+
+- Add — hash note (static builds):
+  - Compute SHA256/384/512 of the exact inline content at build time.
+  - Any change to the inline content requires updating the hash in the header.
+
+### Add — Trusted Types (Chromium hardening; harmless elsewhere):
+
+```http
+Content-Security-Policy: ...; require-trusted-types-for 'script'; trusted-types default dompurify;
+```
+
+### Input sanitization section (expand with URL and HTML guards)
+
+```http
+// SECURE — render as text; never use innerHTML for unsanitized data.
+ displayElement.textContent = userInput;
+
+// Safe URL assignment helper (blocks javascript: and data: for <a>)
+function safeHref(el, url) {
+  try {
+    const u = new URL(url, location.origin);
+    if (u.protocol === 'http:' || u.protocol === 'https:') el.setAttribute('href', u.href);
+  } catch {/* ignore invalid URLs */}
+}
+```
+
+### DOMPurify usage (self-host ESM + CSP-friendly):
+
+```html
+<!-- bundle DOMPurify locally via Vite; avoid CDN to keep CSP simple -->
+<script type="module">
+  import DOMPurify from '/scripts/vendor/dompurify.esm.js';
+  const cleanHtml = DOMPurify.sanitize(untrustedHtml, { USE_PROFILES: { html: true } });
+  displayElement.innerHTML = cleanHtml;
 </script>
 ```
+
+#### Maintainability tips:
+- Put the policy in infrastructure config (`_headers`, `netlify.toml`, `nginx.conf`) not in meta tags.
+- If you later add GA4 or other third parties, update `connect-src` and `img-src` only. Keep `script-src` nonce-based.
+- Prefer no inline scripts/styles. If you must, use nonces or hashes.
 
 # Quality Assurance
 
