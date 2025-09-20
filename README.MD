@@ -1391,45 +1391,6 @@ Get-ChildItem -Include *.jpg,*.jpeg -File | ForEach-Object {
 - Skip AVIF if you don’t serve it; keep WebP + JPEG/PNG.
 - Test visually at multiple zoom levels after encoding.
 
-### Server Configuration
-
-#### Nginx Configuration
-
-```nginx
-http {
-  include /etc/nginx/mime.types;
-  types {
-    image/avif avif;
-    image/webp webp;
-  }
-}
-
-server {
-  location ~* \.(avif|webp)$ {
-    add_header Cache-Control "public, max-age=31536000, immutable";
-    try_files $uri =404;
-  }
-}
-```
-
-#### Apache Configuration
-
-```apache
-AddType image/avif .avif
-AddType image/webp .webp
-
-<IfModule mod_expires.c>
-  ExpiresActive on
-  ExpiresByType image/avif "access plus 1 year"
-  ExpiresByType image/webp "access plus 1 year"
-</IfModule>
-
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE image/svg+xml
-  SetEnvIfNoCase Request_URI "\.(avif|webp)$" no-gzip=1
-</IfModule>
-```
-
 #### Best Practices
 
 ##### Authoring Rules
@@ -1481,291 +1442,183 @@ sizes="(max-width: 1024px) 90vw, 1200px" <!-- With max-width -->
 ### Resource Hints & Preloading
 
 ```html
-<head>
-  <!-- DNS Prefetch for external domains -->
-  <link rel="dns-prefetch" href="https://cdn.example.com">
-  <link rel="dns-prefetch" href="https://analytics.example.com">
-  
-  <!-- Preconnect for critical origins -->
+ <head>
+  <!-- Resource Hints (minimal, accurate, subpath-safe) -->
+  <!-- DNS Prefetch (include ONLY if these domains are used) -->
+  <!-- <link rel="dns-prefetch" href="https://cdn.example.com"> -->
+  <!-- <link rel="dns-prefetch" href="https://analytics.example.com"> -->
+   
+   <!-- Preconnect for critical origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <!-- Preload critical resources -->
-  <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/css/critical.css" as="style">
-  <link rel="preload" href="/js/main.js" as="script">
-  
-  <!-- Prefetch next page resources -->
-  <link rel="prefetch" href="/page2.html">
-  <link rel="prefetch" href="/css/page2.css">
-  
-  <!-- Module preload for ES6 modules -->
-  <link rel="modulepreload" href="/js/modules/critical.js">
-</head>
+   
+   <!-- Preload critical resources -->
+
+  <link rel="preload" href="%BASE_URL%fonts/main.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="%BASE_URL%css/critical.css" as="style">
+  <!-- ES modules: prefer modulepreload over script preload -->
+  <link rel="modulepreload" href="%BASE_URL%scripts/main.js">
+  <!-- LCP image (match picture/srcset if used) -->
+  <!--
+  <link rel="preload" as="image"
+        href="%BASE_URL%img/hero-1200.jpg"
+        imagesrcset="%BASE_URL%img/hero-1200.webp 1200w, %BASE_URL%img/hero-1600.webp 1600w"
+        imagesizes="(max-width: 1024px) 90vw, 1200px">
+  -->
+   
+   <!-- Prefetch next page resources -->
+
+  <link rel="prefetch" href="%BASE_URL%page2.html">
+  <!-- Do NOT prefetch CSS; use preload when truly needed -->
+  <!-- <link rel="preload" href="%BASE_URL%css/page2.css" as="style"> -->
+   
+   <!-- Module preload for ES6 modules -->
+
+  <link rel="modulepreload" href="%BASE_URL%scripts/modules/critical.js">
+ </head>
 ```
 
 ### Service Worker Implementation
 
 ```javascript
 // sw.js
-const CACHE_VERSION = 'v1.0.0';
-const CACHE_NAMES = {
-  static: `static-${CACHE_VERSION}`,
-  dynamic: `dynamic-${CACHE_VERSION}`,
-  images: `images-${CACHE_VERSION}`
-};
-
-// Install event
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAMES.static).then((cache) => {
+// Service Worker (scope-safe, same-origin, nav preload, robust fallbacks)
+ const CACHE_VERSION = 'v1.0.0';
+ const CACHE_NAMES = {
+   static: `static-${CACHE_VERSION}`,
+   dynamic: `dynamic-${CACHE_VERSION}`,
+   images: `images-${CACHE_VERSION}`
+ };
+ 
+ // Install event
+ self.addEventListener('install', (event) => {
+   event.waitUntil(
+     caches.open(CACHE_NAMES.static).then((cache) => {
+      // Use %BASE_URL% for subpath deployments
       return cache.addAll([
-        '/',
-        '/css/main.css',
-        '/js/main.js',
-        '/offline.html'
+        '%BASE_URL%',
+        '%BASE_URL%styles/main.css',
+        '%BASE_URL%scripts/main.js',
+        '%BASE_URL%offline.html'
       ]);
-    })
-  );
-  self.skipWaiting();
-});
-
-// Activate event
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((cacheName) => {
-            return !Object.values(CACHE_NAMES).includes(cacheName);
-          })
-          .map((cacheName) => caches.delete(cacheName))
-      );
-    })
-  );
-  self.clients.claim();
-});
-
-// Fetch strategies
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
+     })
+   );
+   self.skipWaiting();
+ });
+ 
+ // Activate event
+ self.addEventListener('activate', (event) => {
+   event.waitUntil(
+     caches.keys().then((cacheNames) => {
+       return Promise.all(
+         cacheNames
+           .filter((cacheName) => {
+             return !Object.values(CACHE_NAMES).includes(cacheName);
+           })
+           .map((cacheName) => caches.delete(cacheName))
+       );
+     })
+   );
+  // Navigation preload can improve HTML fetch on slow networks
+  if ('navigationPreload' in self.registration) {
+    event.waitUntil(self.registration.navigationPreload.enable());
+  }
+   self.clients.claim();
+ });
+ 
+ // Fetch strategies
+ self.addEventListener('fetch', (event) => {
+   const { request } = event;
   const url = new URL(request.url);
-  
-  // Skip non-GET requests
-  if (request.method !== 'GET') return;
-  
-  // HTML: Network first, fallback to cache
-  if (request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAMES.dynamic).then((cache) => {
-            cache.put(request, responseClone);
-          });
-          return response;
-        })
-        .catch(() => caches.match(request))
-        .catch(() => caches.match('/offline.html'))
-    );
-    return;
-  }
-  
-  // Images: Cache first
-  if (request.destination === 'image') {
-    event.respondWith(
-      caches.match(request).then((response) => {
-        return response || fetch(request).then((response) => {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAMES.images).then((cache) => {
-            cache.put(request, responseClone);
-          });
-          return response;
-        });
-      })
-    );
-    return;
-  }
-  
-  // CSS/JS: Cache first with network update
-  if (request.destination === 'style' || request.destination === 'script') {
-    event.respondWith(
-      caches.match(request).then((response) => {
-        const fetchPromise = fetch(request).then((networkResponse) => {
-          caches.open(CACHE_NAMES.static).then((cache) => {
-            cache.put(request, networkResponse.clone());
-          });
-          return networkResponse;
-        });
-        return response || fetchPromise;
-      })
-    );
-  }
+
+  // Only handle same-origin
+  if (url.origin !== location.origin) return;
+   
+   // Skip non-GET requests
+   if (request.method !== 'GET') return;
+  // Skip no-store and range requests
+  if (request.headers.get('Cache-Control')?.includes('no-store')) return;
+  if (request.headers.has('Range')) return;
+   
+   // HTML: Network first, fallback to cache
+  if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
+     event.respondWith(
+      (async () => {
+        try {
+          const preload = 'navigationPreload' in self.registration
+            ? await event.preloadResponse
+            : null;
+          const net = preload || await fetch(request, { credentials: 'same-origin' });
+          if (net && net.ok) {
+            const clone = net.clone();
+            caches.open(CACHE_NAMES.dynamic).then((c) => c.put(request, clone));
+            return net;
+          }
+          const cached = await caches.match(request);
+          return cached || await caches.match('%BASE_URL%offline.html');
+        } catch {
+          const cached = await caches.match(request);
+          return cached || await caches.match('%BASE_URL%offline.html');
+        }
+      })()
+     );
+     return;
+   }
+   
+   // Images: Cache first
+   if (request.destination === 'image') {
+     event.respondWith(
+       caches.match(request).then((response) => {
+         return response || fetch(request).then((response) => {
+           const responseClone = response.clone();
+           caches.open(CACHE_NAMES.images).then((cache) => {
+             cache.put(request, responseClone);
+           });
+           return response;
+         });
+       })
+     );
+     return;
+   }
+   
+   // CSS/JS: Cache first with network update
+   if (request.destination === 'style' || request.destination === 'script') {
+     event.respondWith(
+       caches.match(request).then((response) => {
+         const fetchPromise = fetch(request).then((networkResponse) => {
+           caches.open(CACHE_NAMES.static).then((cache) => {
+             cache.put(request, networkResponse.clone());
+           });
+           return networkResponse;
+         });
+         return response || fetchPromise;
+       })
+     );
+   }
+ });
+
+// Optional: allow clients to trigger skipWaiting after deploy
+self.addEventListener('message', (event) => {
+  if (event.data === 'SW_SKIP_WAITING') self.skipWaiting();
 });
 ```
 
-### Speculation Rules API
+#### Registration snippet (ensure correct scope)
 
 ```html
-<nav class="main-nav">
-  <a class="nav-link primary-link" href="/about">About</a>
-  <a class="nav-link secondary-link" href="/contact">Contact</a>
-  <a class="related-post-link" href="/blog/next-post">Next</a>
-</nav>
-<a href="/admin" data-no-prerender>Admin</a>
-<link rel="prefetch" href="/category/popular">
-```
-
-#### Next, prefer a static JSON file of rules so it’s easy to version and audit, then reference it once in the page head: 
-
-```javascript
-<script type="speculationrules" src="/speculation-rules.json"></script>
-```
-
-#### And in /speculation-rules.json use a safe default that prerenders product pages on hover and prefetches categories and nav: 
-
-```json
-{
-  "prerender": [
-    { "where": { "href_matches": "/product/*" }, "eagerness": "moderate" }
-  ],
-  "prefetch": [
-    { "where": { "href_matches": "/category/*" }, "eagerness": "conservative" },
-    { "where": { "selector_matches": ".nav-link" }, "eagerness": "conservative" }
-  ]
-}
-```
-
-#### Keep a tiny bootstrap that detects support and falls back to <link rel="prefetch"> so older browsers still benefit: 
-
-```javascript
-<script>
-  function supportsSpeculationRules() {
-    return 'supports' in HTMLScriptElement && HTMLScriptElement.supports('speculationrules');
-  }
-  function prefetch(url) {
-    const l = document.createElement('link'); l.rel='prefetch'; l.href=url; document.head.appendChild(l);
-  }
-  (function () {
-    if (!supportsSpeculationRules()) {
-      document.querySelectorAll('.nav-link, .primary-link').forEach(a => prefetch(a.href));
-    }
-  })();
-</script>
-```
-
-#### Add behavior-driven rules to create real UX wins without overdoing it. Prerender a product on hover, prefetch the next page in listings, and after some reading time prerender a few related posts: 
-
-```javascript
-<script>
-  function addSpeculationRules(rules){
-    const s=document.createElement('script'); s.type='speculationrules'; s.textContent=JSON.stringify(rules);
-    document.head.appendChild(s);
-  }
-
-  document.addEventListener('mouseover', e => {
-    const a = e.target.closest('a[href^="/product/"]');
-    if (!a || a.matches('[data-no-prerender]')) return;
-    addSpeculationRules({ prerender: [{ urls:[a.href], eagerness:'moderate' }] });
-  }, { passive:true });
-
-  (function prefetchNext(){
-    const url = new URL(location); const p = Number(url.searchParams.get('page')||1)+1;
-    url.searchParams.set('page', p);
-    addSpeculationRules({ prefetch: [{ urls:[url.pathname+url.search], eagerness:'conservative' }] });
-  })();
-
-  if (document.body.classList.contains('single-post')) {
-    setTimeout(() => {
-      const urls = [...document.querySelectorAll('.related-post-link')].slice(0,3).map(a=>a.href);
-      if (urls.length) addSpeculationRules({ prerender:[{ urls, eagerness:'moderate' }] });
-    }, 30000);
+<script type="module">
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('%BASE_URL%sw.js', { scope: '%BASE_URL%' })
+      .catch(console.error);
   }
 </script>
 ```
 
-#### Make the strategy adaptive so you avoid wasting CPU and bandwidth on low-end conditions or users in Data Saver. Only enable more aggressive prerendering if the device can handle it: 
-
-```javascript
-<script>
-  const conn = navigator.connection || {};
-  const saveData = navigator.saveData === true;
-  const lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
-                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
-                 /2g/.test(conn.effectiveType||'');
-
-  function canPrerender() { return !saveData && !lowEnd; }
-
-  if (canPrerender()) {
-    const s=document.createElement('script');
-    s.type='speculationrules';
-    s.textContent=JSON.stringify({ prerender:[{ urls:['/dashboard','/profile'], eagerness:'moderate' }] });
-    document.head.appendChild(s);
-  }
-</script>
-```
-
-#### If you use a SPA or do client-side routing, clear old rules on route change before applying fresh ones so nothing “leaks” across pages: 
-
-```javascript
-<script>
-  function clearSpeculation() {
-    document.querySelectorAll('script[type="speculationrules"]').forEach(s=>s.remove());
-  }
-  window.addEventListener('popstate', () => { clearSpeculation(); /* reapply rules for the current route here */ });
-</script>
-
-Measure the impact so you know the rules are paying off. A minimal observer that logs navigation entries and a rough FCP is enough to start: 
-
-<script>
-  if ('PerformanceObserver' in window) {
-    new PerformanceObserver(list => {
-      for (const e of list.getEntries()) {
-        if (e.entryType === 'navigation') {
-          const fcp = performance.getEntriesByName('first-contentful-paint')[0]?.startTime ?? null;
-          console.log('[nav]', { url:e.name, fcp });
-        }
-      }
-    }).observe({ entryTypes:['navigation'] });
-  }
-</script>
-```
-
-#### To wrap up, keep eagerness sensible (conservative for likely clicks, moderate for hovers, immediate only for truly critical paths), filter out routes that must never prerender (admin, hash links, debug queries), prefer selector-based targeting for precision, and always pair this with good HTML semantics and image optimization so the navigation speedups translate into a noticeably faster, more polished site.
-
-
-## Build Configuration
-
-#### Versioned Assets & Caching Strategy
-
-```nginx
-# CDN configuration with Brotli/HTTP3 enabled
-# CI/CD pipeline: build → tests (lint/a11y/LHCI) → deploy → cache purge (e.g., Cloudflare)
-
-location ~* \.(css|js|png|jpg|svg|woff2)$ {
-  add_header Cache-Control "public, max-age=31536000, immutable";
-}
-
-location ~* \.(html)$ {
-  add_header Cache-Control "no-cache";
-}
-```
-
-#### Build Script Configuration
-
-```json
-{
-  "scripts": {
-    "build": "npm run clean && npm run build:css && npm run build:js && npm run build:html",
-    "build:css": "postcss src/css/main.css -o dist/css/main.css",
-    "build:js": "esbuild src/js/main.js --bundle --minify --outfile=dist/js/main.js",
-    "build:html": "node scripts/build-html.js",
-    "clean": "rimraf dist",
-    "serve": "serve dist -p 3000",
-    "preview": "npm run build && npm run serve"
-  }
-}
-```
+##### **Notes:**
+- Use `%BASE_URL%` everywhere to work on GitHub Pages or any subpath.
+- Do not prefetch CSS. Preload CSS only when you will apply it.
+- Cache hashed assets aggressively via HTTP headers; SW should not fight server caching.
+- Keep PWA optional. If you do not need offline, skip the SW entirely.
 
 ### Vite Configuration
 
